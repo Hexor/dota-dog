@@ -424,6 +424,20 @@ function renderExtra(agg){
   h+='<div class="card"><h2>头铁榜（越挫越勇）</h2><div class="desc">场次多但胜率偏低，屡败屡战的猛士（≥8场，娱乐向）</div>';
   if(iron.length){ iron.forEach(function(m,i){ h+='<div class="row" data-id="'+m.id+'" style="cursor:pointer;"><div class="rank">'+(i+1)+'</div><div class="grow"><div class="name">'+m.name+'</div><div class="meta">'+m.total+'场</div></div><div class="val">'+pct(m.wr)+'%<small>'+m.w+'胜'+m.l+'败</small></div></div>'; }); } else h+='<div class="empty">数据不足（需≥8场）</div>';
   h+='</div>';
+  var badHero=Object.keys(agg.guildHeroAgg).map(function(hid){ var s=agg.guildHeroAgg[hid]; return { hid:parseInt(hid), c:s.w+s.l, w:s.w, l:s.l, wr:s.w/(s.w+s.l) }; })
+    .filter(function(x){ return x.c>=5; })
+    .sort(function(a,b){ if(a.wr!==b.wr) return a.wr-b.wr; return b.c-a.c; }).slice(0,10);
+  h+='<div class="card"><h2>又菜又爱玩榜</h2><div class="desc">工会玩得多但胜率垫底的英雄，越菜越爱玩（≥5场）</div>';
+  if(badHero.length){
+    var badMax=badHero.reduce(function(m,x){ return Math.max(m,x.c); },1);
+    badHero.forEach(function(x,i){
+      h+='<div class="row"><div class="rank '+rankClass(i)+'">'+(i+1)+'</div><div class="grow">'+
+         '<div class="name">'+getHeroName(x.hid)+'</div>'+
+         '<div class="bar"><i style="width:'+pct(x.c/badMax)+'%"></i></div></div>'+
+         '<div class="val">'+pct(x.wr)+'%<small>'+x.c+'场·'+x.w+'胜'+x.l+'败</small></div></div>';
+    });
+  } else h+='<div class="empty">数据不足（需≥5场）</div>';
+  h+='</div>';
   var useArr=Object.keys(agg.guildHeroAgg).map(function(hid){ var s=agg.guildHeroAgg[hid]; return { hid:parseInt(hid), c:s.w+s.l, wr:s.w/(s.w+s.l) }; }).sort(function(a,b){ return b.c-a.c; }).slice(0,15);
   h+='<div class="card"><h2>工会本命英雄榜</h2><div class="desc">全工会使用次数最多的英雄</div>';
   if(useArr.length){ useArr.forEach(function(x,i){ h+='<div class="row"><div class="rank '+rankClass(i)+'">'+(i+1)+'</div><div class="grow"><div class="name">'+getHeroName(x.hid)+'</div></div><div class="val">'+x.c+'<small>场·'+pct(x.wr)+'%</small></div></div>'; }); } else h+='<div class="empty">暂无数据</div>';
