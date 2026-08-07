@@ -5,41 +5,71 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Stratz 比赛数据</title>
 <style>
+:root{
+  --bg:#0f0f14;
+  --surface:#17171e;
+  --surface-2:#1e1e27;
+  --surface-3:#262631;
+  --border:#2a2a36;
+  --border-strong:#3b3b4a;
+  --text:#ece9e3;
+  --text-dim:#9d98a2;
+  --text-faint:#6e6a75;
+  --accent:#c8382b;
+  --accent-hi:#de4738;
+  --accent-soft:rgba(200,56,43,.12);
+  --gold:#d9a441;
+  --win:#4fb286;
+  --loss:#d4584a;
+  --radius:12px;
+}
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background:#f8f9fb; color:#1a1a2e; line-height:1.5; padding:1.5rem; }
+::selection { background:rgba(200,56,43,.35); }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif; background:
+  radial-gradient(1100px 520px at 50% -180px, rgba(200,56,43,.13), transparent 62%),
+  repeating-linear-gradient(135deg, rgba(255,255,255,.014) 0 1px, transparent 1px 5px),
+  var(--bg); color:var(--text); line-height:1.5; padding:1.5rem; -webkit-font-smoothing:antialiased; }
 .container { max-width:1200px; margin:0 auto; }
-h1 { text-align:right; font-size:1.8rem; }
-.subtitle { text-align:right; color:#6b7280; font-size:0.85rem; margin-bottom:1.5rem; }
-.tabs { display:flex; gap:0.25rem; background:#eef0f4; padding:0.35rem; border-radius:0.5rem; margin-bottom:1rem; flex-wrap:wrap; }
-.tab { flex:1; min-width:120px; padding:0.6rem 1rem; text-align:center; border:none; background:transparent; border-radius:0.4rem; cursor:pointer; font-size:0.9rem; color:#4b5563; }
-.tab.active { background:#fff; color:#111; font-weight:600; }
-.card { background:#fff; border:1px solid #e5e7eb; border-radius:0.6rem; padding:1.2rem; margin-bottom:1rem; }
-label { display:block; font-weight:600; margin-bottom:0.5rem; }
-input { width:100%; padding:0.6rem 0.8rem; border:1px solid #d1d5db; border-radius:0.4rem; font-size:0.95rem; margin-bottom:0.8rem; }
-.btn-primary { background:#1f2937; color:#fff; border:none; padding:0.6rem 1.2rem; border-radius:0.4rem; cursor:pointer; }
+h1 { text-align:right; font-size:1.8rem; font-family:"Noto Serif SC","Songti SC","STSong","SimSun",Georgia,serif; letter-spacing:0.05em; }
+h1 span { color:var(--accent); }
+.subtitle { text-align:right; color:var(--text-dim); font-size:0.85rem; margin-bottom:1.5rem; }
+.tabs { display:flex; gap:4px; background:var(--surface); border:1px solid var(--border); padding:4px; border-radius:999px; margin-bottom:1rem; flex-wrap:wrap; }
+.tab { flex:1; min-width:120px; padding:0.6rem 1rem; text-align:center; border:none; background:transparent; border-radius:999px; cursor:pointer; font-size:0.9rem; color:var(--text-dim); transition:background 0.15s ease-out, color 0.15s ease-out; }
+.tab:hover { color:var(--text); background:var(--surface-2); }
+.tab.active { background:var(--accent); color:#fff; font-weight:600; }
+.card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.2rem; margin-bottom:1rem; box-shadow:0 12px 32px rgba(0,0,0,0.28); }
+label { display:block; font-weight:600; margin-bottom:0.5rem; color:var(--text-dim); }
+input { width:100%; padding:0.65rem 0.8rem; border:1px solid var(--border-strong); border-radius:9px; font-size:0.95rem; margin-bottom:0.8rem; background:var(--surface-2); color:var(--text); }
+input::placeholder { color:var(--text-faint); }
+.btn-primary { background:var(--accent); color:#fff; border:1px solid var(--accent); padding:0.6rem 1.2rem; border-radius:9px; cursor:pointer; font-weight:600; transition:background 0.15s ease-out; }
+.btn-primary:hover { background:var(--accent-hi); }
+.btn-primary:focus-visible, .tab:focus-visible, input:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
 .function-page { display:none; }
-.function-page.active { display:block; }
+.function-page.active { display:block; animation:pageIn 0.18s ease-out; }
+@keyframes pageIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
 .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:1rem; }
-.stat-item { text-align:center; padding:1rem; background:#f9fafb; border-radius:0.5rem; }
-.stat-number { font-size:1.6rem; font-weight:700; color:#2563eb; }
-.stat-label { font-size:0.8rem; color:#6b7280; }
-.table { border:1px solid #e5e7eb; border-radius:0.5rem; overflow:hidden; margin-top:0.8rem; }
-.table-header { background:#f3f4f6; padding:0.7rem 1rem; font-weight:600; font-size:0.85rem; }
-.table-row { display:flex; align-items:center; padding:0.7rem 1rem; border-top:1px solid #f0f0f0; }
+.stat-item { text-align:center; padding:1rem; background:var(--surface-2); border:1px solid var(--border); border-radius:10px; }
+.stat-number { font-size:1.6rem; font-weight:700; color:var(--text); font-variant-numeric:tabular-nums; }
+.stat-label { font-size:0.8rem; color:var(--text-dim); }
+.table { border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-top:0.8rem; }
+.table-header { background:var(--surface-2); padding:0.7rem 1rem; font-weight:600; font-size:0.85rem; color:var(--text-dim); }
+.table-row { display:flex; align-items:center; padding:0.7rem 1rem; border-top:1px solid var(--border); transition:background 0.15s ease-out; }
+.table-row:hover { background:var(--accent-soft); }
 .table-cell { font-size:0.85rem; }
-.match-result { padding:0.2rem 0.6rem; border-radius:0.3rem; font-size:0.75rem; font-weight:600; }
-.badge-success { background:#dcfce7; color:#166534; }
-.badge-destructive { background:#fee2e2; color:#991b1b; }
-.section-header { margin:0.5rem 0 0.3rem; }
-.section-subheader { margin:1rem 0 0.3rem; }
-.no-data { text-align:center; padding:2rem; color:#6b7280; }
-.loading { text-align:center; padding:2rem; color:#2563eb; }
-.error { background:#fee2e2; color:#991b1b; padding:0.8rem 1rem; border-radius:0.5rem; margin-top:1rem; font-size:0.85rem; }
+.match-result { padding:0.2rem 0.6rem; border-radius:6px; font-size:0.75rem; font-weight:600; }
+.badge-success { background:rgba(79,178,134,.14); color:var(--win); }
+.badge-destructive { background:rgba(212,88,74,.14); color:var(--loss); }
+.section-header { margin:0.5rem 0 0.3rem; color:var(--text); }
+.section-subheader { margin:1rem 0 0.3rem; color:var(--text); }
+.no-data { text-align:center; padding:2rem; color:var(--text-dim); }
+.loading { text-align:center; padding:2rem; color:var(--text-dim); }
+.error { background:rgba(200,56,43,.1); color:#f2b3a8; border:1px solid rgba(200,56,43,.35); padding:0.8rem 1rem; border-radius:10px; margin-top:1rem; font-size:0.85rem; }
+@media (prefers-reduced-motion: reduce) { * { transition:none !important; animation:none !important; } }
 </style>
 </head>
 <body>
 <div class="container">
-<h1>Stratz 比赛数据</h1>
+<h1>Stratz <span>比赛数据</span></h1>
 <div class="subtitle">查看Dota2玩家的最近30天比赛记录</div>
 <div class="tabs">
 <button class="tab active" data-fn="matches">比赛记录</button>
@@ -111,7 +141,7 @@ function displayStats(matches, accountId, player){
   const avgDur=Math.round(dur/matches.length/60);
   const name=(player.steamAccount && player.steamAccount.name) || ("玩家 " + accountId);
   const sc=document.getElementById("statsContainer");
-  let h = "<div class=" + JSON.stringify("card") + "><h3>🎮 " + name + " 的统计概览 (最近30天，共" + matches.length + "场)</h3><div class=" + JSON.stringify("stats-grid") + ">";
+  let h = "<div class=" + JSON.stringify("card") + "><h3>" + name + " 的统计概览 (最近30天，共" + matches.length + "场)</h3><div class=" + JSON.stringify("stats-grid") + ">";
   function cell(n,l){ return "<div class=" + JSON.stringify("stat-item") + "><div class=" + JSON.stringify("stat-number") + ">" + n + "</div><div class=" + JSON.stringify("stat-label") + ">" + l + "</div></div>"; }
   h += cell(matches.length,"总场次") + cell(wins,"胜利") + cell(winRate + "%","胜率") + cell(kda,"平均KDA") + cell(Math.round(k/matches.length),"平均击杀") + cell(avgDur + "分钟","平均时长");
   h += "</div></div>";
