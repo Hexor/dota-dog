@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<!-- saved from url=(0027)https://dota-dog.pages.dev/ -->
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stratz 比赛数据</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 222.2 84% 4.9%;
+            --popover: 0 0% 100%;
+            --popover-foreground: 222.2 84% 4.9%;
+            --primary: 222.2 47.4% 11.2%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 210 40% 96%;
+            --secondary-foreground: 222.2 84% 4.9%;
+            --muted: 210 40% 96%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --accent: 210 40% 96%;
+            --accent-foreground: 222.2 84% 4.9%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 214.3 31.8% 91.4%;
+            --input: 214.3 31.8% 91.4%;
+            --ring: 222.2 84% 4.9%;
+            --radius: 0.5rem;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: 600;
+            line-height: 2.25rem;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: hsl(var(--muted-foreground));
+            font-size: 0.875rem;
+        }
+
+        /* Card */
+        .card {
+            background-color: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        /* Input */
+        .input {
+            display: flex;
+            height: 2.5rem;
+            width: 100%;
+            border-radius: calc(var(--radius) - 2px);
+            border: 1px solid hsl(var(--border));
+            background-color: hsl(var(--background));
+            padding: 0 0.75rem;
+            font-size: 0.875rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .input:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            border-color: hsl(var(--ring));
+        }
+
+        .input::placeholder {
+            color: hsl(var(--muted-foreground));
+        }
+
+        /* Label */
+        .label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            line-height: 1;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        /* Button */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: calc(var(--radius) - 2px);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+            height: 2.5rem;
+            padding: 0 1rem;
+        }
+
+        .btn-primary {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .btn-primary:hover {
+            background-color: hsl(var(--primary) / 0.9);
+        }
+
+        .btn-destructive {
+            background-color: hsl(var(--destructive));
+            color: hsl(var(--destructive-foreground));
+        }
+
+        .btn-destructive:hover {
+            background-color: hsl(var(--destructive) / 0.9);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background-color: hsl(var(--muted));
+            border-radius: calc(var(--radius) - 2px);
+            padding: 0.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .tab {
+            flex: 1;
+            border-radius: calc(var(--radius) - 4px);
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .tab:hover {
+            background-color: hsl(var(--accent));
+            color: hsl(var(--accent-foreground));
+        }
+
+        .tab.active {
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        }
+
+        /* Table */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: hsl(var(--card));
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid hsl(var(--border));
+        }
+
+        .table-header {
+            background-color: hsl(var(--muted));
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid hsl(var(--border));
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            font-size: 0.875rem;
+        }
+
+        .table-row {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid hsl(var(--border));
+            transition: background-color 0.2s ease;
+        }
+
+        .table-row:hover {
+            background-color: hsl(var(--muted));
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .table-cell {
+            flex: 1;
+            padding: 0 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .table-cell:first-child {
+            padding-left: 0;
+        }
+
+        .table-cell:last-child {
+            padding-right: 0;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: calc(var(--radius) - 4px);
+            padding: 0.125rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            line-height: 1;
+        }
+
+        .badge-success {
+            background-color: hsl(142 76% 36%);
+            color: hsl(355 7% 97%);
+        }
+
+        .badge-destructive {
+            background-color: hsl(var(--destructive));
+            color: hsl(var(--destructive-foreground));
+        }
+
+        /* Alert */
+        .alert {
+            border-radius: var(--radius);
+            border: 1px solid hsl(var(--border));
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .alert-destructive {
+            background-color: hsl(var(--destructive) / 0.1);
+            border-color: hsl(var(--destructive));
+            color: hsl(var(--destructive));
+        }
+
+        /* Separator */
+        .separator {
+            height: 1px;
+            background-color: hsl(var(--border));
+            margin: 1rem 0;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: hsl(var(--muted-foreground));
+            font-size: 0.875rem;
+        }
+
+        /* No data */
+        .no-data {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: hsl(var(--muted-foreground));
+            font-size: 0.875rem;
+            background-color: hsl(var(--muted));
+            border-radius: var(--radius);
+            border: 1px solid hsl(var(--border));
+        }
+
+        .no-data h3 {
+            color: hsl(var(--foreground));
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .stat-item {
+            background-color: hsl(var(--card));
+            padding: 0.75rem;
+            border-radius: calc(var(--radius) - 2px);
+            border: 1px solid hsl(var(--border));
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: hsl(var(--primary));
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: hsl(var(--muted-foreground));
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Section headers */
+        .section-header {
+            color: hsl(var(--foreground));
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-subheader {
+            color: hsl(142 76% 36%);
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin: 1rem 0 0.5rem 0;
+        }
+
+        .section-subheader.destructive {
+            color: hsl(var(--destructive));
+        }
+
+        /* Info box */
+        .info-box {
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background-color: hsl(221 83% 53% / 0.1);
+            border-radius: calc(var(--radius) - 2px);
+            border-left: 3px solid hsl(221 83% 53%);
+        }
+
+        .info-box h4 {
+            color: hsl(221 83% 53%);
+            margin: 0 0 0.375rem 0;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .info-box p {
+            margin: 0.125rem 0;
+            color: hsl(var(--foreground));
+            font-size: 0.875rem;
+        }
+
+        /* Debug section */
+        .debug-section {
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background-color: hsl(var(--muted));
+            border-radius: calc(var(--radius) - 2px);
+            border: 1px solid hsl(var(--border));
+        }
+
+        .debug-section summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            font-size: 0.875rem;
+        }
+
+        .debug-section div {
+            margin-top: 0.5rem;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.75rem;
+            color: hsl(var(--muted-foreground));
+            line-height: 1.4;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Additional components */
+        .search-section {
+            background-color: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .input-field {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .function-page {
+            background-color: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            padding: 1.5rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .function-page.active {
+            display: block;
+        }
+
+        .match-result {
+            display: inline-flex;
+            align-items: center;
+            border-radius: calc(var(--radius) - 4px);
+            padding: 0.125rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            line-height: 1;
+        }
+    </style>
+<style id="_goober"> @keyframes go2264125279{from{transform:scale(0) rotate(45deg);opacity:0;}to{transform:scale(1) rotate(45deg);opacity:1;}}@keyframes go3020080000{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}@keyframes go463499852{from{transform:scale(0) rotate(90deg);opacity:0;}to{transform:scale(1) rotate(90deg);opacity:1;}}@keyframes go1268368563{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}@keyframes go1310225428{from{transform:scale(0) rotate(45deg);opacity:0;}to{transform:scale(1) rotate(45deg);opacity:1;}}@keyframes go651618207{0%{height:0;width:0;opacity:0;}40%{height:0;width:6px;opacity:1;}100%{opacity:1;height:10px;}}@keyframes go901347462{from{transform:scale(0.6);opacity:0.4;}to{transform:scale(1);opacity:1;}}.go4109123758{z-index:9999;}.go4109123758 > *{pointer-events:auto;}</style><style type="text/css">.___Latex___1nfc2_1 ._latex_1nfc2_1 {
+  font: inherit
+}
+</style><style data-glasp-print="rule">@media print{[data-glasp-print="hide"]{display:none !important}}</style></head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Stratz 比赛数据</h1>
+            <p>查看Dota2玩家的最近30天比赛记录</p>
+        </div>
+
+        <!-- 功能切换按钮 -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchFunction(&#39;matches&#39;)">比赛记录</button>
+            <button class="tab" onclick="switchFunction(&#39;enemy-heroes&#39;)">敌方英雄统计</button>
+            <button class="tab" onclick="switchFunction(&#39;ally-heroes&#39;)">友方英雄统计</button>
+            <button class="tab" onclick="switchFunction(&#39;my-heroes&#39;)">我的英雄统计</button>
+            <button class="tab" onclick="switchFunction(&#39;pick-suggestion&#39;)">选人建议</button>
+        </div>
+
+        <div class="search-section">
+            <div class="input-group">
+                <div class="input-field">
+                    <label for="playerId" class="label">Player ID</label>
+                    <input type="text" id="playerId" class="input" placeholder="请输入 Dota 数字 ID (例如: 123456789)">
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="fetchMatches()">查询比赛数据</button>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            <p>正在获取数据...</p>
+        </div>
+
+        <div id="error" class="alert alert-destructive" style="display: block;">获取数据失败: HTTP错误: 403 - {
+  "message":"A bearer token is required for a request. View more at https://stratz.com/api"
+}</div>
+
+        <!-- 比赛记录页面 -->
+        <div id="matches-page" class="function-page active">
+            <div id="statsContainer" style="display: none;"></div>
+            <div style="text-align: center; margin-bottom: 20px; color: hsl(var(--muted-foreground)); font-style: italic; font-size: 0.875rem;">
+                点击任意比赛行可在新窗口查看详细比赛信息
+            </div>
+            <div id="matchesContainer"></div>
+        </div>
+
+        <!-- 敌方英雄统计页面 -->
+        <div id="enemy-heroes-page" class="function-page">
+            <div id="enemyHeroesContainer"></div>
+        </div>
+
+        <!-- 友方英雄统计页面 -->
+        <div id="ally-heroes-page" class="function-page">
+            <div id="allyHeroesContainer"></div>
+        </div>
+
+        <!-- 我的英雄统计页面 -->
+        <div id="my-heroes-page" class="function-page">
+            <div id="myHeroesContainer"></div>
+        </div>
+
+        <!-- 选人建议页面 -->
+        <div id="pick-suggestion-page" class="function-page">
+            <div id="pickSuggestionContainer"></div>
+        </div>
+    </div>
+
+    <script>
+    // 不再需要 API_TOKEN，token 已移到 Cloudflare 环境变量 + /api/stratz 代理
+
+    // GraphQL查询，获取比赛数据
+    const TURBO_MATCHES_QUERY = `
+        query GetPlayerMatches($steamAccountId: Long!) {
+            player(steamAccountId: $steamAccountId) {
+                steamAccountId
+                steamAccount {
+                    name
+                    profileUri
+                }
+                matches(request: {
+                    take: 100
+                }) {
+                    id
+                    didRadiantWin
+                    durationSeconds
+                    startDateTime
+                    gameMode
+                    players {
+                        steamAccountId
+                        isRadiant
+                        heroId
+                        kills
+                        deaths
+                        assists
+                        networth
+                        numLastHits
+                        level
+                        item0Id
+                        item1Id
+                        item2Id
+                        item3Id
+                        item4Id
+                        item5Id
+                    }
+                }
+            }
+        }
+    `;
+
+    // 英雄ID到中文名称的映射
+    const heroNames = {
+        1: "敌法师", 2: "斧王", 3: "祸乱之源", 4: "嗜血狂魔", 5: "水晶室女",
+        6: "卓尔游侠", 7: "撼地者", 8: "主宰", 9: "米拉娜", 10: "变体精灵",
+        11: "影魔", 12: "幻影长矛手", 13: "帕克", 14: "帕吉", 15: "雷泽",
+        16: "沙王", 17: "风暴之灵", 18: "斯温", 19: "小小", 20: "复仇之魂",
+        21: "风行者", 22: "宙斯", 23: "昆卡", 25: "莉娜", 26: "莱恩",
+        27: "暗影萨满", 28: "斯拉达", 29: "潮汐猎人", 30: "巫医", 31: "巫妖",
+        32: "力丸", 33: "谜团", 34: "修补匠", 35: "狙击手", 36: "瘟疫法师",
+        37: "术士", 38: "兽王", 39: "痛苦女王", 40: "剧毒术士", 41: "虚空假面",
+        42: "冥魂大帝", 43: "死亡先知", 44: "幻影刺客", 45: "帕格纳", 46: "圣堂刺客",
+        47: "冥界亚龙", 48: "露娜", 49: "龙骑士", 50: "戴泽", 51: "发条技师",
+        52: "拉席克", 53: "先知", 54: "噬魂鬼", 55: "黑暗贤者", 56: "克林克兹",
+        57: "全能骑士", 58: "魅惑魔女", 59: "哈斯卡", 60: "暗夜魔王", 61: "育母蜘蛛",
+        62: "赏金猎人", 63: "编织者", 64: "杰奇洛", 65: "蝙蝠骑士", 66: "陈",
+        67: "幽鬼", 68: "远古冰魄", 69: "末日使者", 70: "熊战士", 71: "裂魂人",
+        72: "矮人直升机", 73: "炼金术士", 74: "祈求者", 75: "沉默术士", 76: "殁境神蚀者",
+        77: "狼人", 78: "酒仙", 79: "暗影恶魔", 80: "德鲁伊", 81: "混沌骑士",
+        82: "米波", 83: "树精卫士", 84: "食人魔魔法师", 85: "不朽尸王", 86: "拉比克",
+        87: "干扰者", 88: "司夜刺客", 89: "娜迦海妖", 90: "光之守卫", 91: "艾欧",
+        92: "维萨吉", 93: "斯拉克", 94: "美杜莎", 95: "巨魔战将", 96: "半人马战行者",
+        97: "马格纳斯", 98: "伐木机", 99: "钢背兽", 100: "巨牙海民", 101: "天怒法师",
+        102: "亚巴顿", 103: "上古巨神", 104: "军团指挥官", 105: "工程师", 106: "灰烬之灵",
+        107: "大地之灵", 108: "孽主", 109: "恐怖利刃", 110: "凤凰", 111: "神谕者",
+        112: "寒冬飞龙", 113: "天穹守望者", 114: "齐天大圣", 119: "邪影芳灵", 120: "石鳞剑士",
+        121: "天涯墨客", 123: "森海飞霞", 126: "虚无之灵", 128: "电炎绝手", 129: "玛尔斯",
+        131: "马戏团长", 135: "破晓晨光", 136: "玛西", 137: "兽", 138: "琼英碧灵",
+        145: "凯"
+    };
+
+    function getHeroName(heroId) {
+        return heroNames[heroId] || `英雄 ${heroId}`;
+    }
+
+    function formatDuration(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+    function formatDateTime(timestamp) {
+        const date = new Date(timestamp * 1000);
+        return date.toLocaleString('zh-CN');
+    }
+
+    // 将Steam ID转换为账户ID
+    function steamIdToAccountId(steamId) {
+        if (!steamId) return null;
+        const steamId64 = BigInt(steamId);
+        const accountId = steamId64 - BigInt('76561197960265728');
+        return accountId.toString();
+    }
+
+    async function fetchMatches() {
+        const playerIdInput = document.getElementById('playerId').value.trim();
+
+        let accountId = null;
+
+        if (playerIdInput) {
+            accountId = playerIdInput;
+            localStorage.setItem('savedPlayerId', playerIdInput);
+        } else {
+            showError('请输入Player ID');
+            return;
+        }
+
+        const daysBack = 30;
+
+        const loadingEl = document.getElementById('loading');
+        const errorEl = document.getElementById('error');
+        const matchesContainer = document.getElementById('matchesContainer');
+        const statsContainer = document.getElementById('statsContainer');
+        const searchBtn = document.querySelector('.btn-primary');
+
+        loadingEl.style.display = 'block';
+        errorEl.style.display = 'none';
+        matchesContainer.innerHTML = '';
+        statsContainer.style.display = 'none';
+        searchBtn.disabled = true;
+
+        try {
+            console.log('发送请求，Account ID:', accountId, '天数:', daysBack);
+
+            // 改为调用自己的 Pages Function 代理，不再直接带 token 请求 stratz
+            const response = await fetch('/api/stratz', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    query: TURBO_MATCHES_QUERY,
+                    variables: {
+                        steamAccountId: parseInt(accountId)
+                    }
+                })
+            });
+
+            console.log('响应状态:', response.status);
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('HTTP错误响应:', errorText);
+                throw new Error(`HTTP错误: ${response.status} - ${errorText}`);
+            }
+
+            const data = await response.json();
+            console.log('API响应数据:', data);
+
+            if (data.errors) {
+                console.error('GraphQL错误:', data.errors);
+                throw new Error(`GraphQL错误: ${data.errors[0].message}`);
+            }
+
+            const player = data.data?.player;
+            if (!player) {
+                throw new Error('找不到该玩家，请检查ID是否正确');
+            }
+
+            const allMatches = player.matches;
+            console.log('获取到的总比赛数量:', allMatches ? allMatches.length : 0);
+
+            if (!allMatches || allMatches.length === 0) {
+                showNoData();
+                return;
+            }
+
+            const cutoffTime = Math.floor(Date.now() / 1000) - (daysBack * 24 * 60 * 60);
+            const filteredMatches = allMatches.filter(match => match.startDateTime >= cutoffTime);
+
+            console.log('过滤后的比赛数量:', filteredMatches.length);
+
+            if (filteredMatches.length === 0) {
+                showNoData();
+                return;
+            }
+
+            displayMatches(filteredMatches, accountId);
+            displayStats(filteredMatches, accountId, player);
+
+            window.currentMatches = filteredMatches;
+            window.currentAccountId = accountId;
+            window.currentPlayer = player;
+
+        } catch (error) {
+            console.error('获取数据时出错:', error);
+            showError(`获取数据失败: ${error.message}`);
+        } finally {
+            loadingEl.style.display = 'none';
+            searchBtn.disabled = false;
+        }
+    }
+
+    function showError(message) {
+        const errorEl = document.getElementById('error');
+        errorEl.innerHTML = message;
+        errorEl.style.display = 'block';
+    }
+
+    function showNoData() {
+        const daysBack = 30;
+        const matchesContainer = document.getElementById('matchesContainer');
+        matchesContainer.innerHTML = `
+            <div class="no-data">
+                <h3>没有找到数据</h3>
+                <p>最近${daysBack}天没有找到比赛记录，或者ID输入不正确</p>
+            </div>
+        `;
+    }
+
+    function displayStats(matches, accountId, player) {
+        const playerAccountId = parseInt(accountId);
+        const daysBack = 30;
+
+        let wins = 0;
+        let totalKills = 0;
+        let totalDeaths = 0;
+        let totalAssists = 0;
+        let totalDuration = 0;
+
+        matches.forEach(match => {
+            const playerData = match.players.find(p => p.steamAccountId === playerAccountId);
+            if (playerData) {
+                const playerWon = (playerData.isRadiant && match.didRadiantWin) ||
+                                (!playerData.isRadiant && !match.didRadiantWin);
+                if (playerWon) wins++;
+
+                totalKills += playerData.kills;
+                totalDeaths += playerData.deaths;
+                totalAssists += playerData.assists;
+            }
+            totalDuration += match.durationSeconds;
+        });
+
+        const winRate = ((wins / matches.length) * 100).toFixed(1);
+        const avgKDA = totalDeaths > 0 ? ((totalKills + totalAssists) / totalDeaths).toFixed(2) : '完美';
+        const avgDuration = Math.round(totalDuration / matches.length / 60);
+
+        const playerName = player.steamAccount?.name || `玩家 ${accountId}`;
+
+        const statsContainer = document.getElementById('statsContainer');
+        statsContainer.innerHTML = `
+            <div class="card">
+                <div class="card-header">
+                    <h3>🎮 <span style="color: hsl(221 83% 53%); font-weight: 700; font-size: 1.1em; padding: 0.2rem 0.5rem; background-color: hsl(221 83% 53% / 0.1); border-radius: 0.25rem; border-left: 3px solid hsl(221 83% 53%);">${playerName}</span> 的统计概览 (最近${daysBack}天，共${matches.length}场比赛)</h3>
+                </div>
+                <div class="card-content">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number">${matches.length}</div>
+                            <div class="stat-label">总场次</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${wins}</div>
+                            <div class="stat-label">胜利</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${winRate}%</div>
+                            <div class="stat-label">胜率</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${avgKDA}</div>
+                            <div class="stat-label">平均KDA</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${Math.round(totalKills/matches.length)}</div>
+                            <div class="stat-label">平均击杀</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${avgDuration}分钟</div>
+                            <div class="stat-label">平均时长</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        statsContainer.style.display = 'block';
+    }
+
+    function displayMatches(matches, accountId) {
+        const matchesContainer = document.getElementById('matchesContainer');
+        const playerAccountId = parseInt(accountId);
+
+        const tableHeader = `
+            <div class="table">
+                <div class="table-header">
+                    <div style="display: flex; align-items: center;">
+                        <div style="flex: 2;">比赛信息</div>
+                        <div style="flex: 1;">英雄</div>
+                        <div style="flex: 1;">KDA</div>
+                        <div style="flex: 1;">补刀/净值</div>
+                        <div style="flex: 1;">时长</div>
+                        <div style="flex: 1;">时间</div>
+                        <div style="flex: 1;">结果</div>
+                    </div>
+                </div>
+        `;
+
+        const matchRows = matches.map(match => {
+            const playerData = match.players.find(p => p.steamAccountId === playerAccountId);
+
+            if (!playerData) {
+                return `<div class="table-row">找不到玩家数据</div>`;
+            }
+
+            const playerWon = (playerData.isRadiant && match.didRadiantWin) ||
+                            (!playerData.isRadiant && !match.didRadiantWin);
+
+            const resultClass = playerWon ? 'badge-success' : 'badge-destructive';
+            const resultText = playerWon ? '胜利' : '失败';
+
+            const kda = `${playerData.kills}/${playerData.deaths}/${playerData.assists}`;
+            const kdaRatio = playerData.deaths > 0 ?
+                ((playerData.kills + playerData.assists) / playerData.deaths).toFixed(2) : '完美';
+
+            return `
+                <div class="table-row" onclick="openMatchDetails('${match.id}')" style="cursor: pointer;">
+                    <div class="table-cell" style="flex: 2;">
+                        <div style="font-weight: 600; color: hsl(var(--foreground));">比赛 #${match.id}</div>
+                    </div>
+                    <div class="table-cell" style="flex: 1;">
+                        <div style="font-weight: 600; color: hsl(var(--foreground));">${getHeroName(playerData.heroId)}</div>
+                        <div style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">等级 ${playerData.level}</div>
+                    </div>
+                    <div class="table-cell" style="flex: 1;">
+                        <div style="font-weight: 600; color: hsl(var(--foreground));">${kda}</div>
+                        <div style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">(${kdaRatio})</div>
+                    </div>
+                    <div class="table-cell" style="flex: 1;">
+                        <div style="font-weight: 600; color: hsl(var(--foreground));">${playerData.numLastHits}</div>
+                        <div style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">${playerData.networth.toLocaleString()}</div>
+                    </div>
+                    <div class="table-cell" style="flex: 1;">
+                        <div style="font-weight: 600; color: hsl(var(--foreground));">${formatDuration(match.durationSeconds)}</div>
+                    </div>
+                    <div class="table-cell" style="flex: 1;">
+                        <div style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">${formatDateTime(match.startDateTime)}</div>
+                    </div>
+                    <div class="table-cell" style="flex: 1;">
+                        <div class="match-result ${resultClass}">${resultText}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        matchesContainer.innerHTML = `
+            ${tableHeader}
+            ${matchRows}
+            </div>
+        `;
+    }
+
+    function openMatchDetails(matchId) {
+        const url = `https://www.opendota.com/matches/${matchId}`;
+        window.open(url, '_blank');
+    }
+
+    document.getElementById('playerId').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            fetchMatches();
+        }
+    });
+
+    function switchFunction(functionName) {
+        const buttons = document.querySelectorAll('.tab');
+        buttons.forEach(btn => btn.classList.remove('active'));
+
+        const clickedButton = event.target;
+        if (clickedButton && clickedButton.classList.contains('tab')) {
+            clickedButton.classList.add('active');
+        }
+
+        const pages = document.querySelectorAll('.function-page');
+        pages.forEach(page => {
+            page.classList.remove('active');
+        });
+        document.getElementById(`${functionName}-page`).classList.add('active');
+
+        if (window.currentMatches && window.currentAccountId) {
+            if (functionName === 'matches') {
+                if (window.currentPlayer) {
+                    displayStats(window.currentMatches, window.currentAccountId, window.currentPlayer);
+                }
+            } else if (functionName === 'enemy-heroes') {
+                displayEnemyHeroes(window.currentMatches, window.currentAccountId);
+            } else if (functionName === 'ally-heroes') {
+                displayAllyHeroes(window.currentMatches, window.currentAccountId);
+            } else if (functionName === 'my-heroes') {
+                displayMyHeroes(window.currentMatches, window.currentAccountId);
+            } else if (functionName === 'pick-suggestion') {
+                displayPickSuggestion(window.currentMatches, window.currentAccountId);
+            }
+        }
+    }
+
+    function displayEnemyHeroes(matches, accountId) {
+        const playerAccountId = parseInt(accountId);
+        const daysBack = 30;
+        const enemyHeroes = {};
+
+        matches.forEach(match => {
+            const playerData = match.players.find(p => p.steamAccountId === playerAccountId);
+            if (playerData) {
+                const playerWon = (playerData.isRadiant && match.didRadiantWin) ||
+                                (!playerData.isRadiant && !match.didRadiantWin);
+
+                if (!playerWon) {
+                    match.players.forEach(player => {
+                        if (player.steamAccountId !== playerAccountId &&
+                            player.isRadiant !== playerData.isRadiant) {
+                            const heroName = getHeroName(player.heroId);
+                            enemyHeroes[heroName] = (enemyHeroes[heroName] || 0) + 1;
+                        }
+                    });
+                }
+            }
+        });
+
+        const sortedHeroes = Object.entries(enemyHeroes)
+            .sort(([,a], [,b]) => b - a)
+            .slice(0, 10);
+
+        const container = document.getElementById('enemyHeroesContainer');
+        if (sortedHeroes.length === 0) {
+            container.innerHTML = `
+                <div class="no-data">
+                    <h3>没有数据</h3>
+                    <p>最近${daysBack}天没有找到输掉的比赛数据</p>
+                </div>
+            `;
+            return;
+        }
+
+        const heroCards = sortedHeroes.map(([heroName, count], index) => `
+            <div class="table-row">
+                <div class="table-cell" style="flex: 1;">
+                    <div style="font-weight: 600; color: hsl(var(--muted-foreground));">#${index + 1}</div>
+                </div>
+                <div class="table-cell" style="flex: 3;">
+                    <div style="font-weight: 600; color: hsl(var(--foreground));">${heroName}</div>
+                </div>
+                <div class="table-cell" style="flex: 1;">
+                    <div style="font-weight: 600; color: hsl(var(--foreground));">${count}</div>
+                    <div style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">次</div>
+                </div>
+            </div>
+        `).join('');
+
+        container.innerHTML = `
+            <h3 class="section-header">输掉比赛中最常见的敌方英雄</h3>
+            <div class="table">
+                <div class="table-header">
+                    <div style="display: flex; align-items: center;">
+                        <div style="flex: 1;">排名</div>
+                        <div style="flex: 3;">英雄名称</div>
+                        <div style="flex: 1;">出现次数</div>
+                    </div>
+                </div>
+                ${heroCards}
+            </div>
+        `;
+    }
+
+    function displayAllyHeroes(matches, accountId) {
+        const playerAccountId = parseInt(accountId);
+        const daysBack = 30;
+        const allyHeroes = {};
+
+        matches.forEach(match => {
+            const playerData = match.players.find(p => p.steamAccountId === playerAccountId);
+            if (playerData) {
+                const playerWon = (playerData.isRadiant && match.didRadiantWin) ||
+                                (!playerData.isRadiant && !match.didRadiantWin);
+
+                if (playerWon) {
+                    match.players.forEach(player => {
+                        if (player.steamAccountId !== playerAccountId &&
+                            player.isRadiant === playerData.isRadiant) {
+                            const heroName = getHeroName(player.heroId);
+                            allyHeroes[heroName] = (allyHeroes[heroName] || 0) + 1;
+                        }
+                    });
+                }
+            }
+        });
+
+        const sortedHeroes = Object.entries(allyHeroes)
+            .sort(([,a], [,b]) => b - a)
+            .slice(0, 10);
+
+        const container = document.getElementById('allyHeroesContainer');
+        if (sortedHeroes.length === 0) {
+            container.innerHTML = `
+                <div class="no-data">
+                    <h3>没有数据</h3>
+                    <p>最近${daysBack}天没有找到胜利的比赛数据</p>
+                </div>
+            `;
+            return;
+        }
+
+        const heroCards = sortedHeroes.map(([heroName, count], index) => `
+            <div class="table-row">
+                <div class="table-cell" style="flex: 1;">
+                    <div style="font-weight: 600; color: hsl(var(--muted-foreground));">#${index + 1}</div>
+                </div>
+                <div class="table-cell" style="flex: 3;">
+                    <div style="font-weight: 600; color: hsl(var(--foreground));">${heroName}</div>
+                </div>
+                <div class="table-cell" style="flex: 1;">
+                    <div style="font-weight: 600; color: hsl(var(--foreground));">${count}</div>
+                    <div style="font-size: 0.75rem; color: hsl(var(--muted-foreground));">次</div>
+                </div>
+            </div>
+        `).join('');
+
+        container.innerHTML = `
+            <h3 class="section-header">胜利比赛中最常见的友方英雄</h3>
+            <div class="table">
+                <div class="table-header">
+                    <div style="display: flex; align-items: center;">
+                        <div style="flex: 1;">排名</div>
+                        <div style="flex: 3;">英雄名称</div>
+                        <div style="flex: 1;">出现次数</div>
+                    </div>
+                </div>
+                ${heroCards}
+            </div>
+        `;
+    }
+
+    function displayMyHeroes(matches, accountId) {
+        const playerAccountId = parseInt(accountId);
+        const daysBack = 30;
+        const myHeroes = {};
+        const debugHeroes = new Set();
+
+        matches.forEach(match => {
+            const playerData = match.players.find(p => p.steamAccountId === playerAccountId);
+            if (playerData) {
+                const heroName = getHeroName(playerData.heroId);
+                debugHeroes.add(`ID: ${playerData.heroId} -> ${heroName}`);
+
+                const playerWon = (playerData.isRadiant && match.didRadiantWin) ||
+                                (!playerData.isRadiant && !match.didRadiantWin);
+
+                if (!myHeroes[heroName]) {
+                    myHeroes[heroName] = { total: 0, wins: 0, losses: 0 };
+                }
+
+                myHeroes[heroName].total++;
+                if (playerWon) {
+                    myHeroes[heroName].wins++;
+                } else {
+                    myHeroes[heroName].losses++;
+                }
+            }
+        });
+
+        const winHeroes = Object.entries(myHeroes)
+            .filter(([, stats]) => stats.wins > 0 && stats.total >= 2)
+            .map(([heroName, stats]) => ({
+                heroName, stats, winRate: (stats.wins / stats.total) * 100
+            }))
+            .sort((a, b) => b.winRate - a.winRate)
+            .slice(0, 10);
+
+        const lossHeroes = Object.entries(myHeroes)
+            .filter(([, stats]) => stats.losses > 0 && stats.total >= 2)
+            .map(([heroName, stats]) => ({
+                heroName, stats, lossRate: (stats.losses / stats.total) * 100
+            }))
+            .sort((a, b) => b.lossRate - a.lossRate)
+            .slice(0, 10);
+
+        const container = document.getElementById('myHeroesContainer');
+        if (Object.keys(myHeroes).length === 0) {
+            container.innerHTML = `
+                <div class="no-data">
+                    <h3>没有数据</h3>
+                    <p>最近${daysBack}天没有找到比赛数据</p>
+                </div>
+            `;
+            return;
+        }
+
+        const winHeroCards = winHeroes.map((hero, index) => {
+            const winRate = hero.winRate.toFixed(1);
+            return `
+                <div class="table-row">
+                    <div class="table-cell" style="flex: 1;">
+                        <div style="font-weight: 600; color: hsl(var(--muted-foreground));">#${index + 1}</div>
+                    </div>
+                    <div class="table-cell" style="flex: 2;">
+                        <div style="font-weight: 600; color: hsl(var(--foreground));">${hero.heroName}</div>
+                    </div>
+                    <div class="table-cell" style="flex: 1;">
+                        <div style="font-weight: 600; color: hsl(142 76% 36%
+
+<browser-mcp-container data-wxt-shadow-root=""><template shadowrootmode="open">
+<!-- saved from url=(0027)https://dota-dog.pages.dev/ -->
+<html><head><style>/*! tailwindcss v4.0.17 | MIT License | https://tailwindcss.com */@layer theme{:host,:host{--font-sans:ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;--color-red-700:oklch(.505 .213 27.518);--color-blue-300:oklch(.809 .105 251.813);--color-blue-700:oklch(.488 .243 264.376);--color-gray-50:oklch(.985 .002 247.839);--color-gray-100:oklch(.967 .003 264.542);--color-gray-300:oklch(.872 .01 258.338);--color-gray-400:oklch(.707 .022 261.325);--color-gray-500:oklch(.551 .027 264.364);--color-gray-700:oklch(.373 .034 259.733);--color-gray-800:oklch(.278 .033 256.848);--color-gray-900:oklch(.21 .034 264.665);--color-black:#000;--color-white:#fff;--spacing:4px;--container-lg:512px;--text-xs:12px;--text-xs--line-height:calc(1/.75);--text-sm:14px;--text-sm--line-height:calc(1.25/.875);--text-base:16px;--text-base--line-height: 1.5 ;--text-lg:18px;--text-lg--line-height:calc(1.75/1.125);--font-weight-medium:500;--font-weight-semibold:600;--tracking-tight:-.025em;--tracking-widest:.1em;--leading-relaxed:1.625;--radius-xs:2px;--ease-in:cubic-bezier(.4,0,1,1);--animate-spin:spin 1s linear infinite;--animate-pulse:pulse 2s cubic-bezier(.4,0,.6,1)infinite;--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4,0,.2,1)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-feature-settings:initial;font-variation-settings:initial;-webkit-tap-highlight-color:transparent;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;line-height:1.5}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-feature-settings:initial;font-variation-settings:initial;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring{outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:color-mix(in oklab,currentColor 50%,transparent)}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){-webkit-appearance:button;-moz-appearance:button;appearance:button}::file-selector-button{-webkit-appearance:button;-moz-appearance:button;appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}*{border-color:var(--border);outline-color:color-mix(in oklab,var(--ring)50%,transparent)}body{background-color:var(--background);color:var(--foreground)}button:not(:disabled),[role=button]:not(:disabled){cursor:pointer}:host{all:initial!important;font-family:var(--font-sans)!important;font-size:var(--text-base)!important;line-height:var(--tw-leading,var(--text-base--line-height))!important}:host,:host *{border-color:var(--border)}:host{background-color:var(--background)!important;color:var(--foreground)!important}[type=text],input:where(:not([type])),[type=email],[type=url],[type=password],[type=number],[type=date],[type=datetime-local],[type=month],[type=search],[type=tel],[type=time],[type=week],[multiple],textarea,select{-webkit-appearance:none;-moz-appearance:none;appearance:none;border-color:#6a7282;--tw-shadow:0 0 #0000;background-color:#fff;border-width:1px;border-radius:0;padding:8px 12px;font-size:16px;line-height:24px}:is([type=text],input:where(:not([type])),[type=email],[type=url],[type=password],[type=number],[type=date],[type=datetime-local],[type=month],[type=search],[type=tel],[type=time],[type=week],[multiple],textarea,select):focus{outline-offset:2px;--tw-ring-inset:var(--tw-empty, );--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:oklch(.546 .245 262.881);--tw-ring-offset-shadow:var(--tw-ring-inset)0 0 0 var(--tw-ring-offset-width)var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset)0 0 0 calc(1px + var(--tw-ring-offset-width))var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow);border-color:#155dfc;outline:2px solid #0000}input::placeholder,textarea::placeholder{color:#6a7282;opacity:1}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-date-and-time-value{min-height:1.5em}::-webkit-date-and-time-value{text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit{padding-top:0;padding-bottom:0}::-webkit-datetime-edit-year-field{padding-top:0;padding-bottom:0}::-webkit-datetime-edit-month-field{padding-top:0;padding-bottom:0}::-webkit-datetime-edit-day-field{padding-top:0;padding-bottom:0}::-webkit-datetime-edit-hour-field{padding-top:0;padding-bottom:0}::-webkit-datetime-edit-minute-field{padding-top:0;padding-bottom:0}::-webkit-datetime-edit-second-field{padding-top:0;padding-bottom:0}::-webkit-datetime-edit-millisecond-field{padding-top:0;padding-bottom:0}::-webkit-datetime-edit-meridiem-field{padding-top:0;padding-bottom:0}select{-webkit-print-color-adjust:exact;print-color-adjust:exact;background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='oklch(0.551 0.027 264.364)' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");background-position:right 8px center;background-repeat:no-repeat;background-size:1.5em 1.5em;padding-right:40px}[multiple],[size]:where(select:not([size="1"])){background-image:initial;background-position:initial;background-repeat:unset;background-size:initial;-webkit-print-color-adjust:unset;print-color-adjust:unset;padding-right:12px}[type=checkbox],[type=radio]{-webkit-appearance:none;-moz-appearance:none;appearance:none;-webkit-print-color-adjust:exact;print-color-adjust:exact;vertical-align:middle;-webkit-user-select:none;user-select:none;width:16px;height:16px;color:#155dfc;border-color:#6a7282;--tw-shadow:0 0 #0000;background-color:#fff;background-origin:border-box;border-width:1px;flex-shrink:0;padding:0;display:inline-block}[type=checkbox]{border-radius:0}[type=radio]{border-radius:100%}[type=checkbox]:focus,[type=radio]:focus{outline-offset:2px;--tw-ring-inset:var(--tw-empty, );--tw-ring-offset-width:2px;--tw-ring-offset-color:#fff;--tw-ring-color:oklch(.546 .245 262.881);--tw-ring-offset-shadow:var(--tw-ring-inset)0 0 0 var(--tw-ring-offset-width)var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset)0 0 0 calc(2px + var(--tw-ring-offset-width))var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow);outline:2px solid #0000}[type=checkbox]:checked,[type=radio]:checked{background-color:currentColor;background-position:50%;background-repeat:no-repeat;background-size:100% 100%;border-color:#0000}[type=checkbox]:checked{background-image:url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e")}@media (forced-colors:active){[type=checkbox]:checked{-webkit-appearance:auto;-moz-appearance:auto;appearance:auto}}[type=radio]:checked{background-image:url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e")}@media (forced-colors:active){[type=radio]:checked{-webkit-appearance:auto;-moz-appearance:auto;appearance:auto}}[type=checkbox]:checked:hover,[type=checkbox]:checked:focus,[type=radio]:checked:hover,[type=radio]:checked:focus{background-color:currentColor;border-color:#0000}[type=checkbox]:indeterminate{background-color:currentColor;background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 16 16'%3e%3cpath stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 8h8'/%3e%3c/svg%3e");background-position:50%;background-repeat:no-repeat;background-size:100% 100%;border-color:#0000}@media (forced-colors:active){[type=checkbox]:indeterminate{-webkit-appearance:auto;-moz-appearance:auto;appearance:auto}}[type=checkbox]:indeterminate:hover,[type=checkbox]:indeterminate:focus{background-color:currentColor;border-color:#0000}[type=file]{background:unset;border-color:inherit;font-size:unset;line-height:inherit;border-width:0;border-radius:0;padding:0}[type=file]:focus{outline:1px solid buttontext;outline:1px auto -webkit-focus-ring-color}}@layer components;@layer utilities{.pointer-events-none{pointer-events:none}.visible{visibility:visible}.sr-only{clip:rect(0,0,0,0);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}.absolute{position:absolute}.fixed{position:fixed}.relative{position:relative}.static{position:static}.sticky{position:sticky}.inset-0{inset:calc(var(--spacing)*0)}.-top-1{top:calc(var(--spacing)*-1)}.top-\(--line-offset\){top:var(--line-offset)}.top-\(--terminal-radius\){top:var(--terminal-radius)}.top-0{top:calc(var(--spacing)*0)}.top-2{top:calc(var(--spacing)*2)}.top-4{top:calc(var(--spacing)*4)}.top-\[50\%\]{top:50%}.right-\(--line-offset\){right:var(--line-offset)}.right-0{right:calc(var(--spacing)*0)}.right-2{right:calc(var(--spacing)*2)}.right-4{right:calc(var(--spacing)*4)}.bottom-\(--line-offset\){bottom:var(--line-offset)}.bottom-0{bottom:calc(var(--spacing)*0)}.-left-1{left:calc(var(--spacing)*-1)}.left-\(--line-offset\){left:var(--line-offset)}.left-\(--terminal-radius\){left:var(--terminal-radius)}.left-0{left:calc(var(--spacing)*0)}.left-2{left:calc(var(--spacing)*2)}.left-\[50\%\]{left:50%}.z-10{z-index:10}.z-20{z-index:20}.z-30{z-index:30}.z-50{z-index:50}.z-2147483647{z-index:2147483647}.col-start-2{grid-column-start:2}.container{width:100%}@media (width>=40rem){.container{max-width:640px}}@media (width>=48rem){.container{max-width:768px}}@media (width>=64rem){.container{max-width:1024px}}@media (width>=80rem){.container{max-width:1280px}}@media (width>=96rem){.container{max-width:1536px}}.-mx-1{margin-inline:calc(var(--spacing)*-1)}.mx-4{margin-inline:calc(var(--spacing)*4)}.my-1{margin-block:calc(var(--spacing)*1)}.my-4{margin-block:calc(var(--spacing)*4)}.mt-2{margin-top:calc(var(--spacing)*2)}.mt-4{margin-top:calc(var(--spacing)*4)}.mr-1{margin-right:calc(var(--spacing)*1)}.mr-2{margin-right:calc(var(--spacing)*2)}.mb-0{margin-bottom:calc(var(--spacing)*0)}.ml-auto{margin-left:auto}.box-border{box-sizing:border-box}.line-clamp-1{-webkit-line-clamp:1;-webkit-box-orient:vertical;display:-webkit-box;overflow:hidden}.block{display:block}.contents{display:contents}.flex{display:flex}.grid{display:grid}.inline{display:inline}.inline-flex{display:inline-flex}.table{display:table}.table-caption{display:table-caption}.table-cell{display:table-cell}.table-row{display:table-row}.field-sizing-content{field-sizing:content}.size-2{width:calc(var(--spacing)*2);height:calc(var(--spacing)*2)}.size-2\.5{width:calc(var(--spacing)*2.5);height:calc(var(--spacing)*2.5)}.size-3\.5{width:calc(var(--spacing)*3.5);height:calc(var(--spacing)*3.5)}.size-4{width:calc(var(--spacing)*4);height:calc(var(--spacing)*4)}.size-5{width:calc(var(--spacing)*5);height:calc(var(--spacing)*5)}.size-6{width:calc(var(--spacing)*6);height:calc(var(--spacing)*6)}.size-8{width:calc(var(--spacing)*8);height:calc(var(--spacing)*8)}.size-9{width:calc(var(--spacing)*9);height:calc(var(--spacing)*9)}.size-full{width:100%;height:100%}.h-\(--line-thickness\){height:var(--line-thickness)}.h-4{height:calc(var(--spacing)*4)}.h-5{height:calc(var(--spacing)*5)}.h-6{height:calc(var(--spacing)*6)}.h-8{height:calc(var(--spacing)*8)}.h-9{height:calc(var(--spacing)*9)}.h-10{height:calc(var(--spacing)*10)}.h-\[22px\]{height:22px}.h-\[var\(--radix-select-trigger-height\)\]{height:var(--radix-select-trigger-height)}.h-full{height:100%}.h-px{height:1px}.h-screen{height:100vh}.max-h-\(--radix-dropdown-menu-content-available-height\){max-height:var(--radix-dropdown-menu-content-available-height)}.max-h-80{max-height:calc(var(--spacing)*80)}.max-h-96{max-height:calc(var(--spacing)*96)}.min-h-4{min-height:calc(var(--spacing)*4)}.min-h-16{min-height:calc(var(--spacing)*16)}.w-\(--line-thickness\){width:var(--line-thickness)}.w-3\/4{width:75%}.w-9{width:calc(var(--spacing)*9)}.w-72{width:calc(var(--spacing)*72)}.w-fit{width:fit-content}.w-full{width:100%}.w-px{width:1px}.max-w-\[calc\(100\%-2rem\)\]{max-width:calc(100% - 32px)}.min-w-0{min-width:calc(var(--spacing)*0)}.min-w-\[8rem\]{min-width:128px}.min-w-\[300px\]{min-width:300px}.min-w-\[var\(--radix-select-trigger-width\)\]{min-width:var(--radix-select-trigger-width)}.flex-1{flex:1}.shrink-0{flex-shrink:0}.grow{flex-grow:1}.caption-bottom{caption-side:bottom}.translate-x-\[-50\%\]{--tw-translate-x:-50%;translate:var(--tw-translate-x)var(--tw-translate-y)}.translate-y-0\.5{--tw-translate-y:calc(var(--spacing)*.5);translate:var(--tw-translate-x)var(--tw-translate-y)}.translate-y-\[-50\%\]{--tw-translate-y:-50%;translate:var(--tw-translate-x)var(--tw-translate-y)}.translate-y-\[calc\(-50\%_-_2px\)\]{--tw-translate-y: calc(-50% - 2px) ;translate:var(--tw-translate-x)var(--tw-translate-y)}.rotate-45{rotate:45deg}.transform{transform:var(--tw-rotate-x)var(--tw-rotate-y)var(--tw-rotate-z)var(--tw-skew-x)var(--tw-skew-y)}.animate-caret-blink{animation:1.25s ease-out infinite caret-blink}.animate-pulse{animation:var(--animate-pulse)}.animate-spin{animation:var(--animate-spin)}.cursor-col-resize{cursor:col-resize}.cursor-default{cursor:default}.resize-none{resize:none}.scroll-my-1{scroll-margin-block:calc(var(--spacing)*1)}.grid-cols-\[0_1fr\]{grid-template-columns:0 1fr}.flex-col{flex-direction:column}.flex-col-reverse{flex-direction:column-reverse}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.items-start{align-items:flex-start}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.justify-items-start{justify-items:start}.gap-1{gap:calc(var(--spacing)*1)}.gap-1\.5{gap:calc(var(--spacing)*1.5)}.gap-2{gap:calc(var(--spacing)*2)}.gap-4{gap:calc(var(--spacing)*4)}.gap-6{gap:calc(var(--spacing)*6)}:where(.space-y-1>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing)*1)*var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing)*1)*calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-2>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing)*2)*var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing)*2)*calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-4>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(calc(var(--spacing)*4)*var(--tw-space-y-reverse));margin-block-end:calc(calc(var(--spacing)*4)*calc(1 - var(--tw-space-y-reverse)))}:where(.space-x-0\.5>:not(:last-child)){--tw-space-x-reverse:0;margin-inline-start:calc(calc(var(--spacing)*.5)*var(--tw-space-x-reverse));margin-inline-end:calc(calc(var(--spacing)*.5)*calc(1 - var(--tw-space-x-reverse)))}:where(.space-x-2>:not(:last-child)){--tw-space-x-reverse:0;margin-inline-start:calc(calc(var(--spacing)*2)*var(--tw-space-x-reverse));margin-inline-end:calc(calc(var(--spacing)*2)*calc(1 - var(--tw-space-x-reverse)))}:where(.space-x-4>:not(:last-child)){--tw-space-x-reverse:0;margin-inline-start:calc(calc(var(--spacing)*4)*var(--tw-space-x-reverse));margin-inline-end:calc(calc(var(--spacing)*4)*calc(1 - var(--tw-space-x-reverse)))}.gap-y-0\.5{row-gap:calc(var(--spacing)*.5)}.overflow-auto{overflow:auto}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-x-hidden{overflow-x:hidden}.overflow-y-auto{overflow-y:auto}.rounded-\[2px\]{border-radius:2px}.rounded-\[4px\]{border-radius:4px}.rounded-full{border-radius:3.40282e38px}.rounded-lg{border-radius:var(--radius)}.rounded-md{border-radius:calc(var(--radius) - 2px)}.rounded-sm{border-radius:calc(var(--radius) - 4px)}.rounded-xl{border-radius:calc(var(--radius) + 4px)}.rounded-xs{border-radius:var(--radius-xs)}.border{border-style:var(--tw-border-style);border-width:1px}.border-0{border-style:var(--tw-border-style);border-width:0}.border-2{border-style:var(--tw-border-style);border-width:2px}.border-y{border-block-style:var(--tw-border-style);border-block-width:1px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-r{border-right-style:var(--tw-border-style);border-right-width:1px}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-l{border-left-style:var(--tw-border-style);border-left-width:1px}.border-gray-300{border-color:var(--color-gray-300)}.border-input{border-color:var(--input)}.border-transparent{border-color:#0000}.bg-background{background-color:var(--background)}.bg-background\/80{background-color:color-mix(in oklab,var(--background)80%,transparent)}.bg-black\/80{background-color:color-mix(in oklab,var(--color-black)80%,transparent)}.bg-blue-700{background-color:var(--color-blue-700)}.bg-border{background-color:var(--border)}.bg-card{background-color:var(--card)}.bg-destructive{background-color:var(--destructive)}.bg-foreground{background-color:var(--foreground)}.bg-gray-50{background-color:var(--color-gray-50)}.bg-gray-100{background-color:var(--color-gray-100)}.bg-gray-500{background-color:var(--color-gray-500)}.bg-gray-700{background-color:var(--color-gray-700)}.bg-muted{background-color:var(--muted)}.bg-muted\/50{background-color:color-mix(in oklab,var(--muted)50%,transparent)}.bg-popover{background-color:var(--popover)}.bg-primary{background-color:var(--primary)}.bg-primary\/10{background-color:color-mix(in oklab,var(--primary)10%,transparent)}.bg-secondary{background-color:var(--secondary)}.bg-transparent{background-color:#0000}.bg-white{background-color:var(--color-white)}.fill-black{fill:var(--color-black)}.fill-current{fill:currentColor}.fill-primary{fill:var(--primary)}.stroke-white{stroke:var(--color-white)}.stroke-\[1\.5\]{stroke-width:1.5px}.p-0{padding:calc(var(--spacing)*0)}.p-0\.5{padding:calc(var(--spacing)*.5)}.p-1{padding:calc(var(--spacing)*1)}.p-1\.5{padding:calc(var(--spacing)*1.5)}.p-2{padding:calc(var(--spacing)*2)}.p-3{padding:calc(var(--spacing)*3)}.p-4{padding:calc(var(--spacing)*4)}.p-6{padding:calc(var(--spacing)*6)}.px-1{padding-inline:calc(var(--spacing)*1)}.px-2{padding-inline:calc(var(--spacing)*2)}.px-3{padding-inline:calc(var(--spacing)*3)}.px-4{padding-inline:calc(var(--spacing)*4)}.px-6{padding-inline:calc(var(--spacing)*6)}.py-0{padding-block:calc(var(--spacing)*0)}.py-0\.5{padding-block:calc(var(--spacing)*.5)}.py-1{padding-block:calc(var(--spacing)*1)}.py-1\.5{padding-block:calc(var(--spacing)*1.5)}.py-2{padding-block:calc(var(--spacing)*2)}.py-3{padding-block:calc(var(--spacing)*3)}.py-4{padding-block:calc(var(--spacing)*4)}.py-6{padding-block:calc(var(--spacing)*6)}.py-\[1px\]{padding-block:1px}.pt-0{padding-top:calc(var(--spacing)*0)}.pt-2{padding-top:calc(var(--spacing)*2)}.pr-2{padding-right:calc(var(--spacing)*2)}.pr-8{padding-right:calc(var(--spacing)*8)}.pb-4{padding-bottom:calc(var(--spacing)*4)}.pl-2{padding-left:calc(var(--spacing)*2)}.pl-8{padding-left:calc(var(--spacing)*8)}.text-center{text-align:center}.text-left{text-align:left}.align-middle{vertical-align:middle}.font-mono{font-family:var(--font-mono)}.text-base{font-size:var(--text-base);line-height:var(--tw-leading,var(--text-base--line-height))}.text-lg{font-size:var(--text-lg);line-height:var(--tw-leading,var(--text-lg--line-height))}.text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.text-xs{font-size:var(--text-xs);line-height:var(--tw-leading,var(--text-xs--line-height))}.leading-none{--tw-leading:1;line-height:1}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.tracking-tight{--tw-tracking:var(--tracking-tight);letter-spacing:var(--tracking-tight)}.tracking-widest{--tw-tracking:var(--tracking-widest);letter-spacing:var(--tracking-widest)}.text-balance{text-wrap:balance}.break-all{word-break:break-all}.whitespace-nowrap{white-space:nowrap}.whitespace-pre-wrap{white-space:pre-wrap}.text-black{color:var(--color-black)}.text-card-foreground{color:var(--card-foreground)}.text-current{color:currentColor}.text-destructive-foreground{color:var(--destructive-foreground)}.text-foreground{color:var(--foreground)}.text-gray-500{color:var(--color-gray-500)}.text-gray-700{color:var(--color-gray-700)}.text-gray-900{color:var(--color-gray-900)}.text-muted-foreground{color:var(--muted-foreground)}.text-popover-foreground{color:var(--popover-foreground)}.text-primary{color:var(--primary)}.text-primary-foreground{color:var(--primary-foreground)}.text-red-700{color:var(--color-red-700)}.text-secondary-foreground{color:var(--secondary-foreground)}.text-white{color:var(--color-white)}.underline-offset-4{text-underline-offset:4px}.opacity-0{opacity:0}.opacity-25{opacity:.25}.opacity-50{opacity:.5}.opacity-70{opacity:.7}.opacity-75{opacity:.75}.shadow-lg{--tw-shadow:0 10px 15px -3px var(--tw-shadow-color,#0000001a),0 4px 6px -4px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px var(--tw-shadow-color,#0000001a),0 2px 4px -2px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a),0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-xs{--tw-shadow:0 1px 2px 0 var(--tw-shadow-color,#0000000d);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.ring-0{--tw-ring-shadow:var(--tw-ring-inset,)0 0 0 calc(0px + var(--tw-ring-offset-width))var(--tw-ring-color,currentColor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.ring-1{--tw-ring-shadow:var(--tw-ring-inset,)0 0 0 calc(1px + var(--tw-ring-offset-width))var(--tw-ring-color,currentColor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.ring-gray-500\/10{--tw-ring-color:color-mix(in oklab,var(--color-gray-500)10%,transparent)}.ring-offset-background{--tw-ring-offset-color:var(--background)}.outline-hidden{--tw-outline-style:none;outline-style:none}@media (forced-colors:active){.outline-hidden{outline-offset:2px;outline:2px solid #0000}}.outline{outline-style:var(--tw-outline-style);outline-width:1px}.transition-\[color\,box-shadow\]{transition-property:color,box-shadow;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-all{transition-property:all;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-colors{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-opacity{transition-property:opacity;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-shadow{transition-property:box-shadow;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-transform{transition-property:transform,translate,scale,rotate;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-none{transition-property:none}.duration-200{--tw-duration:.2s;transition-duration:.2s}.duration-500{--tw-duration:.5s;transition-duration:.5s}.duration-1000{--tw-duration:1s;transition-duration:1s}.ease-in{--tw-ease:var(--ease-in);transition-timing-function:var(--ease-in)}.animate-in{--tw-enter-opacity:initial;--tw-enter-scale:initial;--tw-enter-rotate:initial;--tw-enter-translate-x:initial;--tw-enter-translate-y:initial;animation-name:enter;animation-duration:.15s}.outline-none{--tw-outline-style:none;outline-style:none}.select-none{-webkit-user-select:none;user-select:none}.duration-200{animation-duration:.2s}.duration-500{animation-duration:.5s}.duration-1000{animation-duration:1s}.ease-in{animation-timing-function:cubic-bezier(.4,0,1,1)}.fade-in-0{--tw-enter-opacity:0}.ring-inset{--tw-ring-inset:inset}.running{animation-play-state:running}.zoom-in-95{--tw-enter-scale:.95}@media (hover:hover){.group-hover\:opacity-100:is(:where(.group):hover *){opacity:1}}.group-data-\[disabled\=true\]\:pointer-events-none:is(:where(.group)[data-disabled=true] *){pointer-events:none}.group-data-\[disabled\=true\]\:opacity-50:is(:where(.group)[data-disabled=true] *){opacity:.5}.group-\[\.toast\]\:bg-muted:is(:where(.group).toast *){background-color:var(--muted)}.group-\[\.toast\]\:bg-primary:is(:where(.group).toast *){background-color:var(--primary)}.group-\[\.toast\]\:text-muted-foreground:is(:where(.group).toast *){color:var(--muted-foreground)}.group-\[\.toast\]\:text-primary-foreground:is(:where(.group).toast *){color:var(--primary-foreground)}.group-\[\.toaster\]\:border-border:is(:where(.group).toaster *){border-color:var(--border)}.group-\[\.toaster\]\:bg-background:is(:where(.group).toaster *){background-color:var(--background)}.group-\[\.toaster\]\:text-foreground:is(:where(.group).toaster *){color:var(--foreground)}.group-\[\.toaster\]\:shadow-lg:is(:where(.group).toaster *){--tw-shadow:0 10px 15px -3px var(--tw-shadow-color,#0000001a),0 4px 6px -4px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.peer-disabled\:cursor-not-allowed:is(:where(.peer):disabled~*){cursor:not-allowed}.peer-disabled\:opacity-50:is(:where(.peer):disabled~*){opacity:.5}.selection\:bg-primary ::selection{background-color:var(--primary)}.selection\:bg-primary::selection{background-color:var(--primary)}.selection\:text-primary-foreground ::selection{color:var(--primary-foreground)}.selection\:text-primary-foreground::selection{color:var(--primary-foreground)}.file\:inline-flex::file-selector-button{display:inline-flex}.file\:h-7::file-selector-button{height:calc(var(--spacing)*7)}.file\:border-0::file-selector-button{border-style:var(--tw-border-style);border-width:0}.file\:bg-transparent::file-selector-button{background-color:#0000}.file\:text-sm::file-selector-button{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}.file\:font-medium::file-selector-button{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.file\:text-foreground::file-selector-button{color:var(--foreground)}.placeholder\:text-muted-foreground::placeholder{color:var(--muted-foreground)}.before\:absolute:before{content:var(--tw-content);position:absolute}.before\:top-\(--negative-terminal-size\):before{content:var(--tw-content);top:var(--negative-terminal-size)}.before\:top-\(--offset-terminal\):before{content:var(--tw-content);top:var(--offset-terminal)}.before\:right-\(--offset-terminal\):before{content:var(--tw-content);right:var(--offset-terminal)}.before\:bottom-\(--offset-terminal\):before{content:var(--tw-content);bottom:var(--offset-terminal)}.before\:left-\(--negative-terminal-size\):before{content:var(--tw-content);left:var(--negative-terminal-size)}.before\:left-\(--offset-terminal\):before{content:var(--tw-content);left:var(--offset-terminal)}.before\:h-\(--terminal-size\):before{content:var(--tw-content);height:var(--terminal-size)}.before\:w-\(--terminal-size\):before{content:var(--tw-content);width:var(--terminal-size)}.before\:rounded-full:before{content:var(--tw-content);border-radius:3.40282e38px}.before\:border-\(length\:--line-thickness\):before{content:var(--tw-content);border-style:var(--tw-border-style);border-width:var(--line-thickness)}.before\:border-solid:before{content:var(--tw-content);--tw-border-style:solid;border-style:solid}.before\:border-blue-700:before{content:var(--tw-content);border-color:var(--color-blue-700)}.before\:content-\[\'\'\]:before{--tw-content:"";content:var(--tw-content)}.first\:rounded-l-md:first-child{border-top-left-radius:calc(var(--radius) - 2px);border-bottom-left-radius:calc(var(--radius) - 2px)}.first\:border-l:first-child{border-left-style:var(--tw-border-style);border-left-width:1px}.last\:rounded-r-md:last-child{border-top-right-radius:calc(var(--radius) - 2px);border-bottom-right-radius:calc(var(--radius) - 2px)}.last\:border-b-0:last-child{border-bottom-style:var(--tw-border-style);border-bottom-width:0}@media (hover:hover){.hover\:bg-accent:hover{background-color:var(--accent)}.hover\:bg-background:hover{background-color:var(--background)}.hover\:bg-destructive\/90:hover{background-color:color-mix(in oklab,var(--destructive)90%,transparent)}.hover\:bg-gray-500:hover{background-color:var(--color-gray-500)}.hover\:bg-gray-800:hover{background-color:var(--color-gray-800)}.hover\:bg-muted\/50:hover{background-color:color-mix(in oklab,var(--muted)50%,transparent)}.hover\:bg-primary\/90:hover{background-color:color-mix(in oklab,var(--primary)90%,transparent)}.hover\:bg-secondary\/80:hover{background-color:color-mix(in oklab,var(--secondary)80%,transparent)}.hover\:text-accent-foreground:hover{color:var(--accent-foreground)}.hover\:text-gray-400:hover{color:var(--color-gray-400)}.hover\:underline:hover{text-decoration-line:underline}.hover\:opacity-100:hover{opacity:1}}.focus\:bg-accent:focus{background-color:var(--accent)}.focus\:bg-white:focus{background-color:var(--color-white)}.focus\:text-accent-foreground:focus{color:var(--accent-foreground)}.focus\:ring-2:focus{--tw-ring-shadow:var(--tw-ring-inset,)0 0 0 calc(2px + var(--tw-ring-offset-width))var(--tw-ring-color,currentColor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.focus\:ring-blue-300:focus{--tw-ring-color:var(--color-blue-300)}.focus\:ring-ring:focus{--tw-ring-color:var(--ring)}.focus\:ring-offset-2:focus{--tw-ring-offset-width:2px;--tw-ring-offset-shadow:var(--tw-ring-inset,)0 0 0 var(--tw-ring-offset-width)var(--tw-ring-offset-color)}.focus\:outline-hidden:focus{--tw-outline-style:none;outline-style:none}@media (forced-colors:active){.focus\:outline-hidden:focus{outline-offset:2px;outline:2px solid #0000}}.focus\:ring-inset:focus{--tw-ring-inset:inset}.focus-visible\:border-ring:focus-visible{border-color:var(--ring)}.focus-visible\:ring-\[3px\]:focus-visible{--tw-ring-shadow:var(--tw-ring-inset,)0 0 0 calc(3px + var(--tw-ring-offset-width))var(--tw-ring-color,currentColor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.focus-visible\:ring-destructive\/20:focus-visible{--tw-ring-color:color-mix(in oklab,var(--destructive)20%,transparent)}.focus-visible\:ring-ring\/50:focus-visible{--tw-ring-color:color-mix(in oklab,var(--ring)50%,transparent)}.focus-visible\:outline-1:focus-visible{outline-style:var(--tw-outline-style);outline-width:1px}.focus-visible\:outline-ring:focus-visible{outline-color:var(--ring)}.disabled\:pointer-events-none:disabled{pointer-events:none}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:opacity-50:disabled,.has-disabled\:opacity-50:has(:disabled){opacity:.5}.has-\[\>svg\]\:grid-cols-\[calc\(var\(--spacing\)\*4\)_1fr\]:has(>svg){grid-template-columns:calc(var(--spacing)*4)1fr}.has-\[\>svg\]\:gap-x-3:has(>svg){column-gap:calc(var(--spacing)*3)}.has-\[\>svg\]\:px-2\.5:has(>svg){padding-inline:calc(var(--spacing)*2.5)}.has-\[\>svg\]\:px-3:has(>svg){padding-inline:calc(var(--spacing)*3)}.has-\[\>svg\]\:px-4:has(>svg){padding-inline:calc(var(--spacing)*4)}.aria-invalid\:border-destructive[aria-invalid=true]{border-color:var(--destructive)}.aria-invalid\:ring-destructive\/20[aria-invalid=true]{--tw-ring-color:color-mix(in oklab,var(--destructive)20%,transparent)}.data-\[active\=true\]\:z-10[data-active=true]{z-index:10}.data-\[active\=true\]\:border-ring[data-active=true]{border-color:var(--ring)}.data-\[active\=true\]\:ring-\[3px\][data-active=true]{--tw-ring-shadow:var(--tw-ring-inset,)0 0 0 calc(3px + var(--tw-ring-offset-width))var(--tw-ring-color,currentColor);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.data-\[active\=true\]\:ring-ring\/50[data-active=true]{--tw-ring-color:color-mix(in oklab,var(--ring)50%,transparent)}.data-\[active\=true\]\:aria-invalid\:border-destructive[data-active=true][aria-invalid=true]{border-color:var(--destructive)}.data-\[active\=true\]\:aria-invalid\:ring-destructive\/20[data-active=true][aria-invalid=true]{--tw-ring-color:color-mix(in oklab,var(--destructive)20%,transparent)}.data-\[disabled\]\:pointer-events-none[data-disabled]{pointer-events:none}.data-\[disabled\]\:opacity-50[data-disabled]{opacity:.5}.data-\[error\=true\]\:text-destructive-foreground[data-error=true]{color:var(--destructive-foreground)}.data-\[inset\]\:pl-8[data-inset]{padding-left:calc(var(--spacing)*8)}.data-\[orientation\=horizontal\]\:h-px[data-orientation=horizontal]{height:1px}.data-\[orientation\=horizontal\]\:w-full[data-orientation=horizontal]{width:100%}.data-\[orientation\=vertical\]\:h-full[data-orientation=vertical]{height:100%}.data-\[orientation\=vertical\]\:w-px[data-orientation=vertical]{width:1px}.data-\[placeholder\]\:text-muted-foreground[data-placeholder]{color:var(--muted-foreground)}.data-\[side\=bottom\]\:translate-y-1[data-side=bottom]{--tw-translate-y:calc(var(--spacing)*1);translate:var(--tw-translate-x)var(--tw-translate-y)}.data-\[side\=bottom\]\:slide-in-from-top-2[data-side=bottom]{--tw-enter-translate-y:-8px}.data-\[side\=left\]\:-translate-x-1[data-side=left]{--tw-translate-x:calc(var(--spacing)*-1);translate:var(--tw-translate-x)var(--tw-translate-y)}.data-\[side\=left\]\:slide-in-from-right-2[data-side=left]{--tw-enter-translate-x:8px}.data-\[side\=right\]\:translate-x-1[data-side=right]{--tw-translate-x:calc(var(--spacing)*1);translate:var(--tw-translate-x)var(--tw-translate-y)}.data-\[side\=right\]\:slide-in-from-left-2[data-side=right]{--tw-enter-translate-x:-8px}.data-\[side\=top\]\:-translate-y-1[data-side=top]{--tw-translate-y:calc(var(--spacing)*-1);translate:var(--tw-translate-x)var(--tw-translate-y)}.data-\[side\=top\]\:slide-in-from-bottom-2[data-side=top]{--tw-enter-translate-y:8px}:is(.\*\:data-\[slot\=alert-description\]\:text-destructive-foreground\/80>*)[data-slot=alert-description]{color:color-mix(in oklab,var(--destructive-foreground)80%,transparent)}:is(.\*\:data-\[slot\=select-value\]\:line-clamp-1>*)[data-slot=select-value]{-webkit-line-clamp:1;-webkit-box-orient:vertical;display:-webkit-box;overflow:hidden}:is(.\*\:data-\[slot\=select-value\]\:flex>*)[data-slot=select-value]{display:flex}:is(.\*\:data-\[slot\=select-value\]\:items-center>*)[data-slot=select-value]{align-items:center}:is(.\*\:data-\[slot\=select-value\]\:gap-2>*)[data-slot=select-value]{gap:calc(var(--spacing)*2)}.data-\[state\=active\]\:bg-background[data-state=active]{background-color:var(--background)}.data-\[state\=active\]\:text-foreground[data-state=active]{color:var(--foreground)}.data-\[state\=active\]\:shadow-sm[data-state=active]{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a),0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.data-\[state\=checked\]\:translate-x-4[data-state=checked]{--tw-translate-x:calc(var(--spacing)*4);translate:var(--tw-translate-x)var(--tw-translate-y)}.data-\[state\=checked\]\:border-primary[data-state=checked]{border-color:var(--primary)}.data-\[state\=checked\]\:bg-primary[data-state=checked]{background-color:var(--primary)}.data-\[state\=checked\]\:text-primary-foreground[data-state=checked]{color:var(--primary-foreground)}.data-\[state\=closed\]\:animate-accordion-up[data-state=closed]{animation:.2s ease-out accordion-up}.data-\[state\=closed\]\:animate-out[data-state=closed]{--tw-exit-opacity:initial;--tw-exit-scale:initial;--tw-exit-rotate:initial;--tw-exit-translate-x:initial;--tw-exit-translate-y:initial;animation-name:exit;animation-duration:.15s}.data-\[state\=closed\]\:fade-out-0[data-state=closed]{--tw-exit-opacity:0}.data-\[state\=closed\]\:zoom-out-95[data-state=closed]{--tw-exit-scale:.95}.data-\[state\=open\]\:animate-accordion-down[data-state=open]{animation:.2s ease-out accordion-down}.data-\[state\=open\]\:bg-accent[data-state=open]{background-color:var(--accent)}.data-\[state\=open\]\:text-accent-foreground[data-state=open]{color:var(--accent-foreground)}.data-\[state\=open\]\:text-muted-foreground[data-state=open]{color:var(--muted-foreground)}.data-\[state\=open\]\:animate-in[data-state=open]{--tw-enter-opacity:initial;--tw-enter-scale:initial;--tw-enter-rotate:initial;--tw-enter-translate-x:initial;--tw-enter-translate-y:initial;animation-name:enter;animation-duration:.15s}.data-\[state\=open\]\:fade-in-0[data-state=open]{--tw-enter-opacity:0}.data-\[state\=open\]\:zoom-in-95[data-state=open]{--tw-enter-scale:.95}.data-\[state\=selected\]\:bg-muted[data-state=selected]{background-color:var(--muted)}.data-\[state\=unchecked\]\:translate-x-0[data-state=unchecked]{--tw-translate-x:calc(var(--spacing)*0);translate:var(--tw-translate-x)var(--tw-translate-y)}.data-\[state\=unchecked\]\:bg-input[data-state=unchecked]{background-color:var(--input)}.data-\[variant\=destructive\]\:text-destructive-foreground[data-variant=destructive]{color:var(--destructive-foreground)}.data-\[variant\=destructive\]\:focus\:bg-destructive\/10[data-variant=destructive]:focus{background-color:color-mix(in oklab,var(--destructive)10%,transparent)}.data-\[variant\=destructive\]\:focus\:text-destructive-foreground[data-variant=destructive]:focus{color:var(--destructive-foreground)}@media (width>=40rem){.sm\:max-w-lg{max-width:var(--container-lg)}.sm\:flex-row{flex-direction:row}.sm\:justify-end{justify-content:flex-end}.sm\:text-left{text-align:left}}@media (width>=48rem){.md\:text-sm{font-size:var(--text-sm);line-height:var(--tw-leading,var(--text-sm--line-height))}}.dark\:focus-visible\:ring-destructive\/40:is(.dark *):focus-visible,.dark\:aria-invalid\:ring-destructive\/40:is(.dark *)[aria-invalid=true],.dark\:data-\[active\=true\]\:aria-invalid\:ring-destructive\/40:is(.dark *)[data-active=true][aria-invalid=true]{--tw-ring-color:color-mix(in oklab,var(--destructive)40%,transparent)}.dark\:data-\[variant\=destructive\]\:focus\:bg-destructive\/40:is(.dark *)[data-variant=destructive]:focus{background-color:color-mix(in oklab,var(--destructive)40%,transparent)}.\[\&_p\]\:leading-relaxed p{--tw-leading:var(--leading-relaxed);line-height:var(--leading-relaxed)}.\[\&_svg\]\:pointer-events-none svg{pointer-events:none}.\[\&_svg\]\:shrink-0 svg{flex-shrink:0}.\[\&_svg\:not\(\[class\*\=\'size-\'\]\)\]\:size-4 svg:not([class*=size-]){width:calc(var(--spacing)*4);height:calc(var(--spacing)*4)}.\[\&_svg\:not\(\[class\*\=\'text-\'\]\)\]\:text-muted-foreground svg:not([class*=text-]){color:var(--muted-foreground)}.\[\&_tr\]\:border-b tr{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.\[\&_tr\:last-child\]\:border-0 tr:last-child{border-style:var(--tw-border-style);border-width:0}.\[\&\:has\(\[role\=checkbox\]\)\]\:pr-0:has([role=checkbox]){padding-right:calc(var(--spacing)*0)}:is(.\*\:\[span\]\:last\:flex>*):is(span):last-child{display:flex}:is(.\*\:\[span\]\:last\:items-center>*):is(span):last-child{align-items:center}:is(.\*\:\[span\]\:last\:gap-2>*):is(span):last-child{gap:calc(var(--spacing)*2)}:is(.data-\[variant\=destructive\]\:\*\:\[svg\]\:\!text-destructive-foreground[data-variant=destructive]>*):is(svg){color:var(--destructive-foreground)!important}.\[\&\>\[role\=checkbox\]\]\:translate-y-\[2px\]>[role=checkbox]{--tw-translate-y:2px;translate:var(--tw-translate-x)var(--tw-translate-y)}.\[\&\>svg\]\:pointer-events-none>svg{pointer-events:none}.\[\&\>svg\]\:size-3>svg{width:calc(var(--spacing)*3);height:calc(var(--spacing)*3)}.\[\&\>svg\]\:size-4>svg{width:calc(var(--spacing)*4);height:calc(var(--spacing)*4)}.\[\&\>svg\]\:translate-y-0\.5>svg{--tw-translate-y:calc(var(--spacing)*.5);translate:var(--tw-translate-x)var(--tw-translate-y)}.\[\&\>svg\]\:text-current>svg{color:currentColor}.\[\&\>tr\]\:last\:border-b-0>tr:last-child{border-bottom-style:var(--tw-border-style);border-bottom-width:0}.\[\&\[data-state\=open\]\>svg\]\:rotate-180[data-state=open]>svg{rotate:180deg}@media (hover:hover){a.\[a\&\]\:hover\:bg-accent:hover{background-color:var(--accent)}a.\[a\&\]\:hover\:bg-destructive\/90:hover{background-color:color-mix(in oklab,var(--destructive)90%,transparent)}a.\[a\&\]\:hover\:bg-primary\/90:hover{background-color:color-mix(in oklab,var(--primary)90%,transparent)}a.\[a\&\]\:hover\:bg-secondary\/90:hover{background-color:color-mix(in oklab,var(--secondary)90%,transparent)}a.\[a\&\]\:hover\:text-accent-foreground:hover{color:var(--accent-foreground)}}}:host{--background:oklch(1 0 0);--foreground:oklch(.145 0 0);--card:oklch(1 0 0);--card-foreground:oklch(.145 0 0);--popover:oklch(1 0 0);--popover-foreground:oklch(.145 0 0);--primary:oklch(.205 0 0);--primary-foreground:oklch(.985 0 0);--secondary:oklch(.97 0 0);--secondary-foreground:oklch(.205 0 0);--muted:oklch(.97 0 0);--muted-foreground:oklch(.556 0 0);--accent:oklch(.97 0 0);--accent-foreground:oklch(.205 0 0);--destructive:oklch(.577 .245 27.325);--destructive-foreground:oklch(.577 .245 27.325);--border:oklch(.922 0 0);--input:oklch(.922 0 0);--ring:oklch(.708 0 0);--chart-1:oklch(.646 .222 41.116);--chart-2:oklch(.6 .118 184.704);--chart-3:oklch(.398 .07 227.392);--chart-4:oklch(.828 .189 84.429);--chart-5:oklch(.769 .188 70.08);--radius:10px;--sidebar:oklch(.985 0 0);--sidebar-foreground:oklch(.145 0 0);--sidebar-primary:oklch(.205 0 0);--sidebar-primary-foreground:oklch(.985 0 0);--sidebar-accent:oklch(.97 0 0);--sidebar-accent-foreground:oklch(.205 0 0);--sidebar-border:oklch(.922 0 0);--sidebar-ring:oklch(.708 0 0)}.dark{--background:oklch(.145 0 0);--foreground:oklch(.985 0 0);--card:oklch(.145 0 0);--card-foreground:oklch(.985 0 0);--popover:oklch(.145 0 0);--popover-foreground:oklch(.985 0 0);--primary:oklch(.985 0 0);--primary-foreground:oklch(.205 0 0);--secondary:oklch(.269 0 0);--secondary-foreground:oklch(.985 0 0);--muted:oklch(.269 0 0);--muted-foreground:oklch(.708 0 0);--accent:oklch(.269 0 0);--accent-foreground:oklch(.985 0 0);--destructive:oklch(.396 .141 25.723);--destructive-foreground:oklch(.637 .237 25.331);--border:oklch(.269 0 0);--input:oklch(.269 0 0);--ring:oklch(.556 0 0);--chart-1:oklch(.488 .243 264.376);--chart-2:oklch(.696 .17 162.48);--chart-3:oklch(.769 .188 70.08);--chart-4:oklch(.627 .265 303.9);--chart-5:oklch(.645 .246 16.439);--sidebar:oklch(.205 0 0);--sidebar-foreground:oklch(.985 0 0);--sidebar-primary:oklch(.488 .243 264.376);--sidebar-primary-foreground:oklch(.985 0 0);--sidebar-accent:oklch(.269 0 0);--sidebar-accent-foreground:oklch(.985 0 0);--sidebar-border:oklch(.269 0 0);--sidebar-ring:oklch(.439 0 0)}@keyframes enter{0%{opacity:var(--tw-enter-opacity,1);transform:translate3d(var(--tw-enter-translate-x,0),var(--tw-enter-translate-y,0),0)scale3d(var(--tw-enter-scale,1),var(--tw-enter-scale,1),var(--tw-enter-scale,1))rotate(var(--tw-enter-rotate,0))}}@keyframes exit{to{opacity:var(--tw-exit-opacity,1);transform:translate3d(var(--tw-exit-translate-x,0),var(--tw-exit-translate-y,0),0)scale3d(var(--tw-exit-scale,1),var(--tw-exit-scale,1),var(--tw-exit-scale,1))rotate(var(--tw-exit-rotate,0))}}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-rotate-x{syntax:"*";inherits:false;initial-value:rotateX(0)}@property --tw-rotate-y{syntax:"*";inherits:false;initial-value:rotateY(0)}@property --tw-rotate-z{syntax:"*";inherits:false;initial-value:rotateZ(0)}@property --tw-skew-x{syntax:"*";inherits:false;initial-value:skewX(0)}@property --tw-skew-y{syntax:"*";inherits:false;initial-value:skewY(0)}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-space-x-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-leading{syntax:"*";inherits:false}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-tracking{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-outline-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-duration{syntax:"*";inherits:false}@property --tw-ease{syntax:"*";inherits:false}@property --tw-content{syntax:"*";inherits:false;initial-value:""}@keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{50%{opacity:.5}}@keyframes accordion-down{0%{height:0}to{height:var(--radix-accordion-content-height)}}@keyframes accordion-up{0%{height:var(--radix-accordion-content-height)}to{height:0}}@keyframes caret-blink{0%,70%,to{opacity:1}20%,50%{opacity:0}}</style></head><body><div></div></body></html></template></browser-mcp-container><div class="glasp-extension-toaster glasp-extension-toaster--youtube-summary" data-glasp-print="hide" style="display: block; width: 320px; margin: unset; padding: unset; border: unset; border-radius: unset; outline: unset; background-color: unset; box-shadow: unset; position: fixed; top: 40px; right: 24px; z-index: 9999;"><template shadowrootmode="open"><div class="glasp-extension" style="font-family: inherit;"></div></template></div></body><div class="glasp-extension" data-glasp-print="hide" id="glasp-web-summary-button" style="display: block; width: unset; margin: unset; padding: unset; border: unset; border-radius: unset; outline: unset; background-color: unset; box-shadow: unset; position: fixed; bottom: 16px; right: 16px; z-index: 9999;"><div class="glasp-extension" style="font-family: inherit;"></div></div><div id="__yetone-nextai-translator" style="z-index: 2147483647;"><template shadowrootmode="open"><div></div></template></div></html>
