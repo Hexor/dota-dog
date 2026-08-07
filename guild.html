@@ -210,7 +210,7 @@ function renderPower(agg){
   var h='<div class="card"><h2>💪 工会实力榜</h2><div class="desc">按每位成员的胜率排名，附最擅长的 3 个英雄及近期胜/败场次</div>';
   if(!arr.length){ h+='<div class="empty">暂无数据</div></div>'; el("power").innerHTML=h; return; }
   arr.forEach(function(m,i){
-    h+='<div class="row"><div class="rank '+rankClass(i)+'">'+(i+1)+'</div><div class="grow">'+
+    h+='<div class="row" data-id="'+m.id+'" style="cursor:pointer;"><div class="rank '+rankClass(i)+'">'+(i+1)+'</div><div class="grow">'+
        '<div class="name">'+m.name+'</div>'+
        '<div class="meta">'+m.total+' 场 · KDA '+m.kda.toFixed(2)+'</div>'+
        '<div class="bar"><i style="width:'+pct(m.wr)+'%"></i></div>'+
@@ -250,7 +250,7 @@ function renderFear(agg){
   agg.memberStats.forEach(function(m){
     var per=Object.keys(m.fearStat).map(function(hid){ return { hid:parseInt(hid), c:m.fearStat[hid] }; }).sort(function(a,b){ return b.c-a.c; }).slice(0,3);
     if(!per.length) return; any=true;
-    h+='<div class="row"><div class="grow"><div class="name">'+m.name+'</div><div class="heroline">'+per.map(function(x){ return '<span class="chip">'+getHeroName(x.hid)+' <span class="wl">'+x.c+'次</span></span>'; }).join("")+'</div></div></div>';
+    h+='<div class="row" data-id="'+m.id+'" style="cursor:pointer;"><div class="grow"><div class="name">'+m.name+'</div><div class="heroline">'+per.map(function(x){ return '<span class="chip">'+getHeroName(x.hid)+' <span class="wl">'+x.c+'次</span></span>'; }).join("")+'</div></div></div>';
   });
   if(!any) h+='<div class="empty">暂无失败场次数据</div>';
   h+='</div>';
@@ -263,7 +263,7 @@ function renderGrind(agg){
   var h='<div class="card"><h2>🌙 最肝榜</h2><div class="desc">最近 7 天内比赛场次最多的成员——谁最能肝（基于所选统计场数范围内）</div>';
   if(!arr.length){ h+='<div class="empty">暂无数据</div></div>'; el("grind").innerHTML=h; return; }
   arr.forEach(function(m,i){
-    h+='<div class="row"><div class="rank '+rankClass(i)+'">'+(i+1)+'</div><div class="grow">'+
+    h+='<div class="row" data-id="'+m.id+'" style="cursor:pointer;"><div class="rank '+rankClass(i)+'">'+(i+1)+'</div><div class="grow">'+
        '<div class="name">'+m.name+'</div>'+
        '<div class="meta">最近一局 '+(timeAgo(m.lastTs)||"未知")+' · 区间共 '+m.total+' 场 · 胜率 '+pct(m.wr)+'%</div>'+
        '<div class="bar"><i style="width:'+pct(m.recent7/max)+'%"></i></div></div>'+
@@ -276,11 +276,11 @@ function renderExtra(agg){
   var h='';
   var kda=agg.memberStats.slice().filter(function(m){return m.total>=3;}).sort(function(a,b){ return b.kda-a.kda; }).slice(0,10);
   h+='<div class="card"><h2>⚔️ KDA 大神榜</h2><div class="desc">平均 (击杀+助攻)/死亡 最高（≥3场）</div>';
-  if(kda.length){ kda.forEach(function(m,i){ h+='<div class="row"><div class="rank '+rankClass(i)+'">'+(i+1)+'</div><div class="grow"><div class="name">'+m.name+'</div><div class="meta">'+m.total+'场 · 胜率'+pct(m.wr)+'%</div></div><div class="val">'+m.kda.toFixed(2)+'<small>KDA</small></div></div>'; }); } else h+='<div class="empty">数据不足</div>';
+  if(kda.length){ kda.forEach(function(m,i){ h+='<div class="row" data-id="'+m.id+'" style="cursor:pointer;"><div class="rank '+rankClass(i)+'">'+(i+1)+'</div><div class="grow"><div class="name">'+m.name+'</div><div class="meta">'+m.total+'场 · 胜率'+pct(m.wr)+'%</div></div><div class="val">'+m.kda.toFixed(2)+'<small>KDA</small></div></div>'; }); } else h+='<div class="empty">数据不足</div>';
   h+='</div>';
   var iron=agg.memberStats.slice().filter(function(m){return m.total>=8;}).sort(function(a,b){ return a.wr-b.wr; }).slice(0,5);
   h+='<div class="card"><h2>🪨 头铁榜（越挫越勇）</h2><div class="desc">场次多但胜率偏低，屡败屡战的猛士（≥8场，娱乐向）</div>';
-  if(iron.length){ iron.forEach(function(m,i){ h+='<div class="row"><div class="rank">'+(i+1)+'</div><div class="grow"><div class="name">'+m.name+'</div><div class="meta">'+m.total+'场</div></div><div class="val">'+pct(m.wr)+'%<small>'+m.w+'胜'+m.l+'败</small></div></div>'; }); } else h+='<div class="empty">数据不足（需≥8场）</div>';
+  if(iron.length){ iron.forEach(function(m,i){ h+='<div class="row" data-id="'+m.id+'" style="cursor:pointer;"><div class="rank">'+(i+1)+'</div><div class="grow"><div class="name">'+m.name+'</div><div class="meta">'+m.total+'场</div></div><div class="val">'+pct(m.wr)+'%<small>'+m.w+'胜'+m.l+'败</small></div></div>'; }); } else h+='<div class="empty">数据不足（需≥8场）</div>';
   h+='</div>';
   var useArr=Object.keys(agg.guildHeroAgg).map(function(hid){ var s=agg.guildHeroAgg[hid]; return { hid:parseInt(hid), c:s.w+s.l, wr:s.w/(s.w+s.l) }; }).sort(function(a,b){ return b.c-a.c; }).slice(0,15);
   h+='<div class="card"><h2>🎯 工会本命英雄榜</h2><div class="desc">全工会使用次数最多的英雄</div>';
@@ -308,6 +308,16 @@ function switchTab(p){
 }
 
 document.querySelectorAll(".tab").forEach(function(t){ t.addEventListener("click", function(){ switchTab(t.getAttribute("data-p")); }); });
+
+/* 点击成员行 -> 跳转到主页详情页，并自动填入该玩家 ID */
+document.addEventListener("click", function(e){
+  var row=e.target.closest ? e.target.closest(".row[data-id]") : null;
+  if(!row) return;
+  var id=row.getAttribute("data-id");
+  if(!id) return;
+  try{ localStorage.setItem("savedPlayerId", id); }catch(err){}
+  window.location.href="index.html?id="+encodeURIComponent(id);
+});
 
 function setProgress(done,total){
   var w=total? Math.round(done/total*100):0;
