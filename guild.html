@@ -168,11 +168,13 @@ function aggregate(results){
     var pl=entry.player;
     var name=entry.alias || (pl.steamAccount && pl.steamAccount.name) || ("玩家 "+id);
     var matches=pl.matches||[];
-    var w=0,l=0,k=0,d=0,a=0,lastTs=0;
+    var w=0,l=0,k=0,d=0,a=0,lastTs=0,recent7=0;
+    var cutoff7=Math.floor(Date.now()/1000)-7*86400;
     var heroStat={}, fearStat={};
     matches.forEach(function(m){
       var me=m.players.find(function(p){ return p.steamAccountId===id; });
       if(!me) return;
+      if(m.startDateTime>=cutoff7) recent7++;
       var won=(me.isRadiant===m.didRadiantWin);
       if(won) w++; else l++;
       k+=me.kills||0; d+=me.deaths||0; a+=me.assists||0;
@@ -193,7 +195,7 @@ function aggregate(results){
       var s=heroStat[hid]; var t=s.w+s.l;
       return { hid:parseInt(hid), w:s.w, l:s.l, t:t, wr:s.w/t };
     }).sort(function(x,y){ var sx=x.wr*100+x.t*2, sy=y.wr*100+y.t*2; return sy-sx; }).slice(0,3);
-    memberStats.push({ id:id, name:name, w:w, l:l, total:total, wr:w/total, kda: d>0?((k+a)/d):(k+a), topHeroes:topHeroes, fearStat:fearStat, lastTs:lastTs });
+    memberStats.push({ id:id, name:name, w:w, l:l, total:total, recent7:recent7, wr:w/total, kda: d>0?((k+a)/d):(k+a), topHeroes:topHeroes, fearStat:fearStat, lastTs:lastTs });
   });
   return { memberStats:memberStats, guildHeroAgg:guildHeroAgg };
 }
@@ -255,16 +257,16 @@ function renderFear(agg){
 }
 
 function renderGrind(agg){
-  var arr=agg.memberStats.slice().sort(function(a,b){ return b.total-a.total; });
-  var max=arr.length?arr[0].total:1;
-  var h='<div class="card"><h2>🌙 最肝榜</h2><div class="desc">统计区间内比赛场次最多的成员——谁最能肝</div>';
+  var arr=agg.memberStats.slice().sort(function(a,b){ if(b.recent7!==a.recent7) return b.recent7-a.recent7; return b.total-a.total; });
+  var max=arr.length?arr[0].recent7:1;
+  var h='<div class="card"><h2>🌙 最肝榜</h2><div class="desc">最近 7 天内比赛场次最多的成员——谁最能肝（基于所选统计场数范围内）</div>';
   if(!arr.length){ h+='<div class="empty">暂无数据</div></div>'; el("grind").innerHTML=h; return; }
   arr.forEach(function(m,i){
     h+='<div class="row"><div class="rank '+rankClass(i)+'">'+(i+1)+'</div><div class="grow">'+
        '<div class="name">'+m.name+'</div>'+
-       '<div class="meta">最近一局 '+(timeAgo(m.lastTs)||"未知")+' · 胜率 '+pct(m.wr)+'%</div>'+
-       '<div class="bar"><i style="width:'+pct(m.total/max)+'%"></i></div></div>'+
-       '<div class="val">'+m.total+'<small>场</small></div></div>';
+       '<div class="meta">最近一局 '+(timeAgo(m.lastTs)||"未知")+' · 区间共 '+m.total+' 场 · 胜率 '+pct(m.wr)+'%</div>'+
+       '<div class="bar"><i style="width:'+pct(m.recent7/max)+'%"></i></div></div>'+
+       '<div class="val">'+m.recent7+'<small>场/7天</small></div></div>';
   });
   h+='</div>'; el("grind").innerHTML=h;
 }
