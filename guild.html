@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>导演我躺哪 · 工会战绩榜</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:#0f1420; color:#e6e9f0; line-height:1.5; padding:1rem; }
+  .container { max-width:960px; margin:0 auto; }
+  .head { text-align:center; margin-bottom:0.6rem; }
+  .head h1 { font-size:1.5rem; background:linear-gradient(90deg,#7cc4ff,#c78bff); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .head .sub { color:#8b93a7; font-size:0.8rem; margin-top:0.2rem; }
+  .toolbar { display:flex; gap:0.5rem; justify-content:center; align-items:center; flex-wrap:wrap; margin:0.8rem 0; }
+  .btn { background:#1f2942; color:#cfe0ff; border:1px solid #2c3a5e; padding:0.55rem 1rem; border-radius:0.5rem; cursor:pointer; font-size:0.9rem; }
+  .btn-primary { background:linear-gradient(90deg,#3b82f6,#8b5cf6); color:#fff; border:none; }
+  .btn:disabled { opacity:0.5; cursor:not-allowed; }
+  select { background:#1f2942; color:#cfe0ff; border:1px solid #2c3a5e; padding:0.5rem 0.6rem; border-radius:0.5rem; font-size:0.85rem; }
+  .tabs { display:flex; gap:0.3rem; overflow-x:auto; padding-bottom:0.4rem; margin-bottom:0.9rem; -webkit-overflow-scrolling:touch; }
+  .tab { flex:0 0 auto; padding:0.5rem 0.85rem; border-radius:2rem; border:1px solid #2c3a5e; background:#151c2e; color:#9aa6bf; font-size:0.83rem; cursor:pointer; white-space:nowrap; }
+  .tab.active { background:#3b82f6; color:#fff; border-color:#3b82f6; }
+  .card { background:#151c2e; border:1px solid #232f4a; border-radius:0.8rem; padding:1rem; margin-bottom:1rem; }
+  .card h2 { font-size:1.05rem; margin-bottom:0.15rem; display:flex; align-items:center; gap:0.4rem; }
+  .card .desc { color:#8b93a7; font-size:0.76rem; margin-bottom:0.7rem; }
+  .page { display:none; } .page.active { display:block; }
+  .row { display:flex; align-items:center; gap:0.6rem; padding:0.6rem 0.4rem; border-top:1px solid #212c45; }
+  .row:first-child { border-top:none; }
+  .rank { flex:0 0 2rem; text-align:center; font-weight:700; font-size:0.95rem; color:#6b7ba0; }
+  .rank.top1 { color:#ffd54a; } .rank.top2 { color:#c7d0e0; } .rank.top3 { color:#e0975a; }
+  .grow { flex:1 1 auto; min-width:0; }
+  .name { font-weight:600; font-size:0.92rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .meta { color:#8b93a7; font-size:0.74rem; margin-top:0.1rem; }
+  .val { flex:0 0 auto; text-align:right; font-weight:700; font-size:0.95rem; color:#7cc4ff; }
+  .val small { display:block; font-weight:400; color:#8b93a7; font-size:0.68rem; }
+  .heroline { display:flex; flex-wrap:wrap; gap:0.3rem; margin-top:0.35rem; }
+  .chip { background:#1c2740; border:1px solid #2c3a5e; border-radius:0.4rem; padding:0.15rem 0.45rem; font-size:0.72rem; color:#cfe0ff; }
+  .chip .wl { color:#8b93a7; }
+  .w { color:#4ade80; } .l { color:#f87171; }
+  .bar { height:5px; border-radius:3px; background:#212c45; overflow:hidden; margin-top:0.35rem; }
+  .bar > i { display:block; height:100%; background:linear-gradient(90deg,#3b82f6,#8b5cf6); }
+  .empty { text-align:center; color:#8b93a7; padding:2rem 1rem; }
+  .progress { text-align:center; color:#7cc4ff; padding:1.5rem; font-size:0.9rem; }
+  .progress .pbar { height:6px; background:#212c45; border-radius:3px; margin:0.7rem auto 0; max-width:320px; overflow:hidden; }
+  .progress .pbar > i { display:block; height:100%; background:#3b82f6; transition:width .2s; }
+  .err { background:#3a1a1f; color:#ffb4b4; border:1px solid #5a2a30; padding:0.7rem 1rem; border-radius:0.5rem; font-size:0.82rem; margin-bottom:1rem; }
+  .foot { text-align:center; color:#566179; font-size:0.72rem; margin:1.2rem 0 2rem; }
+  a { color:inherit; }
+  @media (max-width:480px){ body{padding:0.6rem;} .card{padding:0.8rem;} .rank{flex-basis:1.6rem;} .head h1{font-size:1.25rem;} }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="head">
+    <h1>🎬 导演我躺哪 · 工会战绩榜</h1>
+    <div class="sub">基于每位成员最近比赛记录 · 数据来自 Stratz</div>
+  </div>
+
+  <div class="toolbar">
+    <label style="font-size:0.8rem;color:#8b93a7;">统计场数
+      <select id="takeSel">
+        <option value="30">最近30场</option>
+        <option value="50" selected>最近50场</option>
+        <option value="100">最近100场</option>
+      </select>
+    </label>
+    <button class="btn btn-primary" id="loadBtn">🔄 加载工会数据</button>
+  </div>
+
+  <div id="err" class="err" style="display:none;"></div>
+  <div id="progress" class="progress" style="display:none;"></div>
+
+  <div class="tabs" id="tabs" style="display:none;">
+    <button class="tab active" data-p="power">💪 实力榜</button>
+    <button class="tab" data-p="herowr">🏆 英雄胜率榜</button>
+    <button class="tab" data-p="fear">😱 最怕的英雄</button>
+    <button class="tab" data-p="grind">🌙 最肝榜</button>
+    <button class="tab" data-p="extra">✨ 更多榜单</button>
+  </div>
+
+  <div id="power" class="page active"></div>
+  <div id="herowr" class="page"></div>
+  <div id="fear" class="page"></div>
+  <div id="grind" class="page"></div>
+  <div id="extra" class="page"></div>
+
+  <div class="foot">导演我躺哪 · 仅统计已公开战绩的成员</div>
+</div>
+<script>
+
+/* ============================================================
+   工会成员 Dota 数字 ID 列表
+   可只填 ID：222222   或  [ID,"备注昵称"] 覆盖显示名
+   ============================================================ */
+var GUILD_MEMBERS = [
+  227905111,
+  1596286417,
+  402528317,
+  376031143,
+  836904886,
+  355410761,
+  1379762161,
+  142139746,
+  144867893,
+  1074098346,
+  102374256,
+  199700229
+];
+var GUILD_NAME = "导演我躺哪";
+
+var heroNames = {1:"敌法师",2:"斧王",3:"祸乱之源",4:"嗜血狂魔",5:"水晶室女",6:"卓尔游侠",7:"撼地者",8:"主宰",9:"米拉娜",10:"变体精灵",11:"影魔",12:"幻影长矛手",13:"帕克",14:"帕吉",15:"雷泽",16:"沙王",17:"风暴之灵",18:"斯温",19:"小小",20:"复仇之魂",21:"风行者",22:"宙斯",23:"昆卡",25:"莉娜",26:"莱恩",27:"暗影萨满",28:"斯拉达",29:"潮汐猎人",30:"巫医",31:"巫妖",32:"力丸",33:"谜团",34:"修补匠",35:"狙击手",36:"瘟疫法师",37:"术士",38:"兽王",39:"痛苦女王",40:"剧毒术士",41:"虚空假面",42:"冥魂大帝",43:"死亡先知",44:"幻影刺客",45:"帕格纳",46:"圣堂刺客",47:"冥界亚龙",48:"露娜",49:"龙骑士",50:"戴泽",51:"发条技师",52:"拉席克",53:"先知",54:"噬魂鬼",55:"黑暗贤者",56:"克林克兹",57:"全能骑士",58:"魅惑魔女",59:"哈斯卡",60:"暗夜魔王",61:"育母蜘蛛",62:"赏金猎人",63:"编织者",64:"杰奇洛",65:"蝙蝠骑士",66:"陈",67:"幽鬼",68:"远古冰魄",69:"末日使者",70:"熊战士",71:"裂魂人",72:"矮人直升机",73:"炼金术士",74:"祈求者",75:"沉默术士",76:"殁境神蚀者",77:"狼人",78:"酒仙",79:"暗影恶魔",80:"德鲁伊",81:"混沌骑士",82:"米波",83:"树精卫士",84:"食人魔魔法师",85:"不朽尸王",86:"拉比克",87:"干扰者",88:"司夜刺客",89:"娜迦海妖",90:"光之守卫",91:"艾欧",92:"维萨吉",93:"斯拉克",94:"美杜莎",95:"巨魔战将",96:"半人马战行者",97:"马格纳斯",98:"伐木机",99:"钢背兽",100:"巨牙海民",101:"天怒法师",102:"亚巴顿",103:"上古巨神",104:"军团指挥官",105:"工程师",106:"灰烬之灵",107:"大地之灵",108:"孽主",109:"恐怖利刃",110:"凤凰",111:"神谕者",112:"寒冬飞龙",113:"天穹守望者",114:"齐天大圣",119:"邪影芳灵",120:"石鳞剑士",121:"天涯墨客",123:"森海飞霞",126:"虚无之灵",128:"电炎绝手",129:"玛尔斯",131:"马戏团长",135:"破晓晨光",136:"玛西",137:"兽",138:"琼英碧灵",145:"凯"};
+function getHeroName(id){ return heroNames[id] || ("英雄 "+id); }
+
+function normMembers(){
+  return GUILD_MEMBERS.map(function(m){
+    if(Array.isArray(m)) return { id:parseInt(m[0]), alias:m[1]||null };
+    return { id:parseInt(m), alias:null };
+  }).filter(function(m){ return m.id && !isNaN(m.id); });
+}
+function el(id){ return document.getElementById(id); }
+function showErr(msg){ el("err").innerHTML=msg; el("err").style.display="block"; }
+function hideErr(){ el("err").style.display="none"; }
+function pct(n){ return (n*100).toFixed(1); }
+
+function buildBatchQuery(batch, take){
+  var varDefs = batch.map(function(_,i){ return "$id"+i+": Long!"; }).join(", ");
+  var bodies = batch.map(function(_,i){
+    return "m"+i+": player(steamAccountId: $id"+i+") { steamAccountId steamAccount { name } "+
+      "matches(request: { take: "+take+" }) { id didRadiantWin startDateTime durationSeconds "+
+      "players { steamAccountId isRadiant heroId kills deaths assists } } }";
+  }).join("\n");
+  return "query GuildBatch("+varDefs+") {\n"+bodies+"\n}";
+}
+
+function fetchGuild(take, onProgress){
+  var members = normMembers();
+  if(members.length===0) return Promise.reject(new Error("请先在文件顶部的 GUILD_MEMBERS 数组里填入成员 ID"));
+  var BATCH=4;
+  var results={};
+  var done=0;
+  var chain = Promise.resolve();
+  var _loop = function(i){
+    chain = chain.then(function(){
+      var batch=members.slice(i,i+BATCH);
+      var query=buildBatchQuery(batch, take);
+      var variables={};
+      batch.forEach(function(m,j){ variables["id"+j]=m.id; });
+      return fetch("/api/stratz",{ method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({query:query, variables:variables}) })
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+          if(data && data.data){
+            batch.forEach(function(m,j){ var p=data.data["m"+j]; if(p) results[m.id]={ player:p, alias:m.alias }; });
+          }
+        })
+        .catch(function(){})
+        .then(function(){ done+=batch.length; onProgress(done, members.length); return new Promise(function(r){ setTimeout(r,300); }); });
+    });
+  };
+  for(var i=0;i<members.length;i+=BATCH){ _loop(i); }
+  return chain.then(function(){ return results; });
+}
+
+function aggregate(results){
+  var memberStats=[];
+  var guildHeroAgg={};
+  Object.keys(results).forEach(function(key){
+    var id=parseInt(key);
+    var entry=results[key];
+    var pl=entry.player;
+    var name=entry.alias || (pl.steamAccount && pl.steamAccount.name) || ("玩家 "+id);
+    var matches=pl.matches||[];
+    var w=0,l=0,k=0,d=0,a=0,lastTs=0;
+    var heroStat={}, fearStat={};
+    matches.forEach(function(m){
+      var me=m.players.find(function(p){ return p.steamAccountId===id; });
+      if(!me) return;
+      var won=(me.isRadiant===m.didRadiantWin);
+      if(won) w++; else l++;
+      k+=me.kills||0; d+=me.deaths||0; a+=me.assists||0;
+      if(m.startDateTime>lastTs) lastTs=m.startDateTime;
+      var h=me.heroId;
+      heroStat[h]=heroStat[h]||{w:0,l:0};
+      guildHeroAgg[h]=guildHeroAgg[h]||{w:0,l:0};
+      if(won){ heroStat[h].w++; guildHeroAgg[h].w++; } else { heroStat[h].l++; guildHeroAgg[h].l++; }
+      if(!won){
+        m.players.forEach(function(p){
+          if(p.steamAccountId!==id && p.isRadiant!==me.isRadiant){ fearStat[p.heroId]=(fearStat[p.heroId]||0)+1; }
+        });
+      }
+    });
+    var total=w+l;
+    if(total===0) return;
+    var topHeroes=Object.keys(heroStat).map(function(hid){
+      var s=heroStat[hid]; var t=s.w+s.l;
+      return { hid:parseInt(hid), w:s.w, l:s.l, t:t, wr:s.w/t };
+    }).sort(function(x,y){ var sx=x.wr*100+x.t*2, sy=y.wr*100+y.t*2; return sy-sx; }).slice(0,3);
+    memberStats.push({ id:id, name:name, w:w, l:l, total:total, wr:w/total, kda: d>0?((k+a)/d):(k+a), topHeroes:topHeroes, fearStat:fearStat, lastTs:lastTs });
+  });
+  return { memberStats:memberStats, guildHeroAgg:guildHeroAgg };
+}
+
+function rankClass(i){ return i===0?"top1":i===1?"top2":i===2?"top3":""; }
+function heroChip(h){ return '<span class="chip">'+getHeroName(h.hid)+' <span class="wl"><span class="w">'+h.w+'胜</span>/<span class="l">'+h.l+'败</span></span></span>'; }
+function timeAgo(ts){ if(!ts) return ""; var diff=Math.floor(Date.now()/1000)-ts; if(diff<3600) return Math.max(1,Math.floor(diff/60))+"分钟前"; if(diff<86400) return Math.floor(diff/3600)+"小时前"; return Math.floor(diff/86400)+"天前"; }
+
+function renderPower(agg){
+  var arr=agg.memberStats.slice().sort(function(a,b){ if(b.wr!==a.wr) return b.wr-a.wr; return b.total-a.total; });
+  var h='<div class="card"><h2>💪 工会实力榜</h2><div class="desc">按每位成员的胜率排名，附最擅长的 3 个英雄及近期胜/败场次</div>';
+  if(!arr.length){ h+='<div class="empty">暂无数据</div></div>'; el("power").innerHTML=h; return; }
+  arr.forEach(function(m,i){
+    h+='<div class="row"><div class="rank '+rankClass(i)+'">'+(i+1)+'</div><div class="grow">'+
+       '<div class="name">'+m.name+'</div>'+
+       '<div class="meta">'+m.total+' 场 · KDA '+m.kda.toFixed(2)+'</div>'+
+       '<div class="bar"><i style="width:'+pct(m.wr)+'%"></i></div>'+
+       '<div class="heroline">'+(m.topHeroes.length? m.topHeroes.map(heroChip).join("") : '<span class="chip">暂无常用英雄</span>')+'</div>'+
+       '</div><div class="val">'+pct(m.wr)+'%<small>'+m.w+'胜'+m.l+'败</small></div></div>';
+  });
+  h+='</div>'; el("power").innerHTML=h;
+}
+
+function renderHeroWr(agg){
+  var arr=Object.keys(agg.guildHeroAgg).map(function(hid){ var s=agg.guildHeroAgg[hid]; var t=s.w+s.l; return { hid:parseInt(hid), w:s.w, l:s.l, t:t, wr:s.w/t }; })
+    .filter(function(x){ return x.t>=3; })
+    .sort(function(a,b){ if(b.wr!==a.wr) return b.wr-a.wr; return b.t-a.t; }).slice(0,20);
+  var h='<div class="card"><h2>🏆 英雄胜率榜</h2><div class="desc">全工会成员使用该英雄的合计胜率（至少 3 场）</div>';
+  if(!arr.length){ h+='<div class="empty">暂无足够数据（需累计≥3场）</div></div>'; el("herowr").innerHTML=h; return; }
+  arr.forEach(function(x,i){
+    h+='<div class="row"><div class="rank '+rankClass(i)+'">'+(i+1)+'</div><div class="grow">'+
+       '<div class="name">'+getHeroName(x.hid)+'</div>'+
+       '<div class="bar"><i style="width:'+pct(x.wr)+'%"></i></div></div>'+
+       '<div class="val">'+pct(x.wr)+'%<small>'+x.w+'胜'+x.l+'败</small></div></div>';
+  });
+  h+='</div>'; el("herowr").innerHTML=h;
+}
+
+function renderFear(agg){
+  var total={};
+  agg.memberStats.forEach(function(m){ Object.keys(m.fearStat).forEach(function(hid){ total[hid]=(total[hid]||0)+m.fearStat[hid]; }); });
+  var arr=Object.keys(total).map(function(hid){ return { hid:parseInt(hid), c:total[hid] }; }).sort(function(a,b){ return b.c-a.c; }).slice(0,15);
+  var h='<div class="card"><h2>😱 最怕的英雄榜</h2><div class="desc">全工会成员输掉的比赛中，对面出现最多的英雄——它们最能克制我们</div>';
+  if(!arr.length){ h+='<div class="empty">暂无失败场次数据</div></div>'; }
+  else{
+    arr.forEach(function(x,i){ h+='<div class="row"><div class="rank '+rankClass(i)+'">'+(i+1)+'</div><div class="grow"><div class="name">'+getHeroName(x.hid)+'</div></div><div class="val">'+x.c+'<small>次苦主</small></div></div>'; });
+    h+='</div>';
+  }
+  h+='<div class="card"><h2>🔎 各成员的苦主</h2><div class="desc">每位成员各自输得最多时对面出现的英雄</div>';
+  var any=false;
+  agg.memberStats.forEach(function(m){
+    var per=Object.keys(m.fearStat).map(function(hid){ return { hid:parseInt(hid), c:m.fearStat[hid] }; }).sort(function(a,b){ return b.c-a.c; }).slice(0,3);
+    if(!per.length) return; any=true;
+    h+='<div class="row"><div class="grow"><div class="name">'+m.name+'</div><div class="heroline">'+per.map(function(x){ return '<span class="chip">'+getHeroName(x.hid)+' <span class="wl">'+x.c+'次</span></span>'; }).join("")+'</div></div></div>';
+  });
+  if(!any) h+='<div class="empty">暂无失败场次数据</div>';
+  h+='</div>';
+  el("fear").innerHTML=h;
+}
+
+function renderGrind(agg){
+  var arr=agg.memberStats.slice().sort(function(a,b){ return b.total-a.total; });
+  var max=arr.length?arr[0].total:1;
+  var h='<div class="card"><h2>🌙 最肝榜</h2><div class="desc">统计区间内比赛场次最多的成员——谁最能肝</div>';
+  if(!arr.length){ h+='<div class="empty">暂无数据</div></div>'; el("grind").innerHTML=h; return; }
+  arr.forEach(function(m,i){
+    h+='<div class="row"><div class="rank '+rankClass(i)+'">'+(i+1)+'</div><div class="grow">'+
+       '<div class="name">'+m.name+'</div>'+
+       '<div class="meta">最近一局 '+(timeAgo(m.lastTs)||"未知")+' · 胜率 '+pct(m.wr)+'%</div>'+
+       '<div class="bar"><i style="width:'+pct(m.total/max)+'%"></i></div></div>'+
+       '<div class="val">'+m.total+'<small>场</small></div></div>';
+  });
+  h+='</div>'; el("grind").innerHTML=h;
+}
+
+function renderExtra(agg){
+  var h='';
+  var kda=agg.memberStats.slice().filter(function(m){return m.total>=3;}).sort(function(a,b){ return b.kda-a.kda; }).slice(0,10);
+  h+='<div class="card"><h2>⚔️ KDA 大神榜</h2><div class="desc">平均 (击杀+助攻)/死亡 最高（≥3场）</div>';
+  if(kda.length){ kda.forEach(function(m,i){ h+='<div class="row"><div class="rank '+rankClass(i)+'">'+(i+1)+'</div><div class="grow"><div class="name">'+m.name+'</div><div class="meta">'+m.total+'场 · 胜率'+pct(m.wr)+'%</div></div><div class="val">'+m.kda.toFixed(2)+'<small>KDA</small></div></div>'; }); } else h+='<div class="empty">数据不足</div>';
+  h+='</div>';
+  var iron=agg.memberStats.slice().filter(function(m){return m.total>=8;}).sort(function(a,b){ return a.wr-b.wr; }).slice(0,5);
+  h+='<div class="card"><h2>🪨 头铁榜（越挫越勇）</h2><div class="desc">场次多但胜率偏低，屡败屡战的猛士（≥8场，娱乐向）</div>';
+  if(iron.length){ iron.forEach(function(m,i){ h+='<div class="row"><div class="rank">'+(i+1)+'</div><div class="grow"><div class="name">'+m.name+'</div><div class="meta">'+m.total+'场</div></div><div class="val">'+pct(m.wr)+'%<small>'+m.w+'胜'+m.l+'败</small></div></div>'; }); } else h+='<div class="empty">数据不足（需≥8场）</div>';
+  h+='</div>';
+  var useArr=Object.keys(agg.guildHeroAgg).map(function(hid){ var s=agg.guildHeroAgg[hid]; return { hid:parseInt(hid), c:s.w+s.l, wr:s.w/(s.w+s.l) }; }).sort(function(a,b){ return b.c-a.c; }).slice(0,15);
+  h+='<div class="card"><h2>🎯 工会本命英雄榜</h2><div class="desc">全工会使用次数最多的英雄</div>';
+  if(useArr.length){ useArr.forEach(function(x,i){ h+='<div class="row"><div class="rank '+rankClass(i)+'">'+(i+1)+'</div><div class="grow"><div class="name">'+getHeroName(x.hid)+'</div></div><div class="val">'+x.c+'<small>场·'+pct(x.wr)+'%</small></div></div>'; }); } else h+='<div class="empty">暂无数据</div>';
+  h+='</div>';
+  h+='<div class="card"><h2>💡 其他可加的榜单建议</h2><div class="desc">如果需要更多数据字段，可以继续扩展：</div>'+
+     '<div class="row"><div class="grow"><div class="name">🐖 补刀/经济榜</div><div class="meta">平均正补、净资产，看谁最会发育（需在查询里加 numLastHits/networth）</div></div></div>'+
+     '<div class="row"><div class="grow"><div class="name">🔥 连胜/连败榜</div><div class="meta">按时间排序算当前连胜或连败纪录</div></div></div>'+
+     '<div class="row"><div class="grow"><div class="name">🕹️ 内战榜</div><div class="meta">同一场里有多名工会成员，统计谁参与内战最多/内战胜率</div></div></div>'+
+     '<div class="row"><div class="grow"><div class="name">🌈 英雄池广度榜</div><div class="meta">使用过的不同英雄数量，看谁最"万金油"</div></div></div>'+
+     '<div class="row"><div class="grow"><div class="name">⏰ 时段榜</div><div class="meta">按开局时间统计谁爱打深夜车，或哪个时段胜率最高</div></div></div>'+
+     '<div class="row"><div class="grow"><div class="name">📈 MMR/段位榜</div><div class="meta">Stratz 提供 rank/seasonRank 字段，可做真实实力排名</div></div></div>'+
+     '</div>';
+  el("extra").innerHTML=h;
+}
+
+function renderAll(agg){
+  renderPower(agg); renderHeroWr(agg); renderFear(agg); renderGrind(agg); renderExtra(agg);
+}
+
+function switchTab(p){
+  var tabs=document.querySelectorAll(".tab");
+  tabs.forEach(function(t){ t.classList.toggle("active", t.getAttribute("data-p")===p); });
+  ["power","herowr","fear","grind","extra"].forEach(function(id){ el(id).classList.toggle("active", id===p); });
+}
+
+document.querySelectorAll(".tab").forEach(function(t){ t.addEventListener("click", function(){ switchTab(t.getAttribute("data-p")); }); });
+
+function setProgress(done,total){
+  var w=total? Math.round(done/total*100):0;
+  el("progress").innerHTML='正在加载工会成员数据… '+done+' / '+total+'<div class="pbar"><i style="width:'+w+'%"></i></div>';
+}
+
+el("loadBtn").addEventListener("click", function(){
+  hideErr();
+  var take=parseInt(el("takeSel").value);
+  el("loadBtn").disabled=true;
+  el("tabs").style.display="none";
+  ["power","herowr","fear","grind","extra"].forEach(function(id){ el(id).innerHTML=""; });
+  el("progress").style.display="block";
+  setProgress(0, normMembers().length);
+  fetchGuild(take, setProgress).then(function(results){
+    el("progress").style.display="none";
+    var got=Object.keys(results).length;
+    if(got===0){ showErr("未能获取任何成员数据，请检查 ID 是否正确、或稍后重试（可能触发了 API 频率限制）。"); el("loadBtn").disabled=false; return; }
+    var agg=aggregate(results);
+    if(agg.memberStats.length===0){ showErr("获取到成员，但都没有可用的公开战绩（可能战绩隐藏或近期未游戏）。"); el("loadBtn").disabled=false; return; }
+    renderAll(agg);
+    el("tabs").style.display="flex";
+    switchTab("power");
+    el("loadBtn").disabled=false;
+    el("loadBtn").textContent="🔄 重新加载";
+  }).catch(function(err){
+    el("progress").style.display="none";
+    showErr("加载失败："+err.message);
+    el("loadBtn").disabled=false;
+  });
+});
+
+// 自动加载一次
+el("loadBtn").click();
+
+</script>
+</body>
+</html>
