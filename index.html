@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>导演我躺哪 公会 比赛数据</title>
+<title>Stratz 比赛数据</title>
 <style>
 :root{
   --bg:#0f0f14;
@@ -39,8 +39,9 @@ h1 span { color:var(--accent); }
 .guild-link .arrow { display:inline-block; transition:transform 0.15s ease-out; }
 .guild-link:hover .arrow { transform:translateX(3px); }
 .guild-link:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
-.tabs { display:flex; gap:4px; background:var(--surface); border:1px solid var(--border); padding:4px; border-radius:999px; margin-bottom:1rem; flex-wrap:wrap; }
-.tab { flex:1; min-width:120px; padding:0.6rem 1rem; text-align:center; border:none; background:transparent; border-radius:999px; cursor:pointer; font-size:0.9rem; color:var(--text-dim); transition:background 0.15s ease-out, color 0.15s ease-out; }
+.tabs { display:flex; gap:4px; background:var(--surface); border:1px solid var(--border); padding:4px; border-radius:999px; margin-bottom:1rem; overflow-x:auto; flex-wrap:nowrap; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+.tabs::-webkit-scrollbar { display:none; }
+.tab { flex:1 0 auto; min-width:120px; padding:0.6rem 1rem; text-align:center; border:none; background:transparent; border-radius:999px; cursor:pointer; font-size:0.9rem; color:var(--text-dim); white-space:nowrap; transition:background 0.15s ease-out, color 0.15s ease-out; }
 .tab:hover { color:var(--text); background:var(--surface-2); }
 .tab.active { background:var(--accent); color:#fff; font-weight:600; }
 .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.2rem; margin-bottom:1rem; box-shadow:0 12px 32px rgba(0,0,0,0.28); }
