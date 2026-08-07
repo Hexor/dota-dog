@@ -201,7 +201,10 @@ document.addEventListener("DOMContentLoaded", function(){
   document.getElementById("searchBtn").addEventListener("click", fetchMatches);
   document.getElementById("playerId").addEventListener("keypress", function(e){ if(e.key==="Enter") fetchMatches(); });
   document.querySelectorAll(".tab").forEach(function(b){ b.addEventListener("click", function(){ switchFunction(b.getAttribute("data-fn"), b); }); });
-  const saved=localStorage.getItem("savedPlayerId");
+  const params=new URLSearchParams(location.search);
+  const urlId=params.get("id") || params.get("playerId");
+  if(urlId) localStorage.setItem("savedPlayerId", urlId);
+  const saved=urlId || localStorage.getItem("savedPlayerId");
   if(saved){ document.getElementById("playerId").value=saved; fetchMatches(); }
 });
 </script>
