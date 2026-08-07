@@ -144,14 +144,6 @@
    可只填 ID：222222   或  [ID,"备注昵称"] 覆盖显示名
    ============================================================ */
 var GUILD_MEMBERS = [
-  193589422,
-  135440034,
-  1001427476,
-  167554394,
-  103446024,
-  168014460,
-  784629943,
-  735341589,
   99387367,
   227905111,
   1596286417,
@@ -271,7 +263,7 @@ function aggregate(results){
 function computePartners(results, nameMap){
   var idSet={};
   normMembers().forEach(function(m){ idSet[m.id]=true; });
-  var seen={}, groups={3:{},4:{},5:{}};
+  var seen={}, groups={2:{},3:{},4:{},5:{}};
   Object.keys(results).forEach(function(key){
     var pl=results[key].player;
     (pl.matches||[]).forEach(function(m){
@@ -282,7 +274,7 @@ function computePartners(results, nameMap){
       });
       [true,false].forEach(function(side){
         var g=teamGuild[side];
-        if(g.length<3 || g.length>5) return;
+        if(g.length<2 || g.length>5) return;
         var ids=g.map(function(p){ return p.steamAccountId; }).sort(function(a,b){ return a-b; });
         var key=ids.join("-");
         var st=groups[g.length][key] || (groups[g.length][key]={ ids:ids, w:0, l:0, heroes:{} });
@@ -291,8 +283,8 @@ function computePartners(results, nameMap){
       });
     });
   });
-  var out={3:[],4:[],5:[]};
-  [3,4,5].forEach(function(n){
+  var out={2:[],3:[],4:[],5:[]};
+  [2,3,4,5].forEach(function(n){
     Object.keys(groups[n]).forEach(function(k){
       var st=groups[n][k];
       if(st.w+st.l<2) return;
@@ -381,11 +373,11 @@ function renderGrind(agg){
 
 var currentPartnerN=5;
 function renderPartners(agg){
-  var lists=agg.partnerGroups||{3:[],4:[],5:[]};
+  var lists=agg.partnerGroups||{2:[],3:[],4:[],5:[]};
   var n=currentPartnerN;
   var h='<div class="card"><h2>最佳刀友拍档</h2><div class="desc">同一局同队作战的工会组合，按胜率排名 · 至少 2 场</div>'+
      '<div class="ptabs">'+
-     [5,4,3].map(function(x){ return '<button class="ptab'+(x===n?' active':'')+'" data-n="'+x+'">'+x+' 人同队</button>'; }).join("")+
+     [5,4,3,2].map(function(x){ return '<button class="ptab'+(x===n?' active':'')+'" data-n="'+x+'">'+x+' 人同队</button>'; }).join("")+
      '</div><div id="partnerList"></div></div>';
   el("partners").innerHTML=h;
   renderPartnerList(lists, n);
